@@ -3,6 +3,7 @@ export interface GoogleCalendarSettings {
   accessToken: string;
   tokenExpiry: string;
   tokenExpiryDate?: number;
+  timeRange: number;
 }
 
 export const DEFAULT_GOOGLE_SETTINGS: GoogleCalendarSettings = {
@@ -10,6 +11,7 @@ export const DEFAULT_GOOGLE_SETTINGS: GoogleCalendarSettings = {
   accessToken: "",
   tokenExpiry: "unlimited",
   tokenExpiryDate: undefined,
+  timeRange: 90,
 };
 
 export type TokenExpiryOption =

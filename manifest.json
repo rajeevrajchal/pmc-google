@@ -6,6 +6,10 @@
   "description": "Insert Google Calendar events in your notes by typing @date. Create new events and sync your schedule without leaving Obsidian.",
   "author": "Rajeev Rajchal",
   "authorUrl": "https://rajeevrajchal.com.np",
+  "fundingUrl": {
+    "Buy Me a Coffee": "https://www.buymeacoffee.com/yourusername",
+    "GitHub Sponsors": "https://github.com/sponsors/yourusername"
+  },
   "isDesktopOnly": false,
   "manifest_version": 2
 }

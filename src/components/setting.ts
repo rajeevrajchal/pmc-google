@@ -1,5 +1,5 @@
 import PMCPlugin from "main";
-import { App, PluginSettingTab } from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 import {
   GoogleCalendarSettings,
   DEFAULT_GOOGLE_SETTINGS,
@@ -58,6 +58,22 @@ export class PMCPluginSetting extends PluginSettingTab {
         this.display();
       },
     );
+
+    //suggestion time range setting
+    new Setting(containerEl)
+      .setName("Suggestion Time Range")
+      .setDesc(
+        'Time duration to fetch calendar events for suggestions (e.g., "90 days"). Events from this many days in the past and future will be considered.',
+      )
+      .addText((text) =>
+        text
+          .setPlaceholder("90 days")
+          .setValue(String(this.plugin.settings.timeRange)) // Ensure your settings object has this key
+          .onChange(async (value) => {
+            this.plugin.settings.timeRange = Number(value);
+            await this.plugin.saveSettings();
+          }),
+      );
 
     // Render token status if connected
     if (

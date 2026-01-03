@@ -10,6 +10,7 @@ import {
 } from "obsidian";
 import PMCPlugin from "main";
 import { GoogleCalendarAPI, CalendarEvent } from "./tabs/google";
+import { CreateEventModal } from "./create-event";
 
 interface EventSuggestion {
   isCreate?: boolean;
@@ -37,8 +38,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     const textBeforeCursor = line.substring(0, cursor.ch);
 
     if (textBeforeCursor.endsWith(":")) {
-      new Notice("Trigger activated!");
-
       return {
         start: { line: cursor.line, ch: cursor.ch - 1 },
         end: cursor,
@@ -60,7 +59,7 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
           Date.now() - 7 * 24 * 60 * 60 * 1000,
         ).toISOString();
         const timeMax = new Date(
-          Date.now() + 90 * 24 * 60 * 60 * 1000,
+          Date.now() + this.plugin.settings.timeRange * 24 * 60 * 60 * 1000,
         ).toISOString();
 
         this.cachedEvents = await GoogleCalendarAPI.fetchEvents(
@@ -132,11 +131,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     }
 
     const query = (context.query || "").trim();
-    console.log("the query", {
-      query,
-      accessToken: this.plugin.settings.accessToken,
-    });
-
     try {
       // Fetch all events from cache
       const allEvents = await this.fetchEventsWithCache();
@@ -149,15 +143,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
       // Return create option + filtered events
       const suggestions: EventSuggestion[] = [];
 
-      // Add create new event option if there's a query
-      if (query && query.length > 0) {
-        suggestions.push({
-          isCreate: true,
-          summary: `+ Create new event: "${query}"`,
-        });
-      }
-
-      // Add filtered events
       suggestions.push(
         ...filteredEvents.map((event) => ({
           event,
@@ -165,7 +150,13 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         })),
       );
 
-      return suggestions;
+      return [
+        {
+          isCreate: true,
+          summary: `+ Create new event`,
+        },
+        ...suggestions,
+      ];
     } catch (error) {
       console.error("Error getting suggestions:", error);
       return [];
@@ -181,7 +172,9 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
       "display: flex; justify-content: space-between; align-items: center; padding: 4px 0;";
 
     if (item.isCreate) {
-      new Notice("create new event feature coming soon!");
+      container.style.cssText +=
+        "color: var(--interactive-accent); font-weight: 600;";
+      container.createEl("span", { text: item.summary });
     } else if (item.event) {
       const event = item.event;
       const leftDiv = container.createDiv();
@@ -292,7 +285,22 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     }
 
     if (item.isCreate) {
-      new Notice("create new event feature coming soon!");
+      new CreateEventModal(
+        this.app,
+        this.plugin,
+        this.context.query,
+        (eventData) => {
+          if (this.context) {
+            // Insert the created event as a link
+            const formattedText = `[${eventData.title}](${eventData.link})`;
+            this.context.editor.replaceRange(
+              formattedText,
+              this.context.start,
+              this.context.end,
+            );
+          }
+        },
+      ).open();
     } else if (item.event) {
       const event = item.event;
       const eventLink =
