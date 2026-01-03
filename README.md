@@ -47,7 +47,7 @@
 
 ### Manual Installation
 
-1. Download the latest release from [GitHub Releases](https://github.com/rajeevrajchal/pmc/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/rajeevrajchal/pmc-google/releases)
 2. Extract the files to your vault's `.obsidian/plugins/pick-google-calendar/` folder
 3. Reload Obsidian
 4. Enable the plugin in Settings → Community Plugins
@@ -313,7 +313,7 @@ Contributions are welcome! Please follow these steps:
 
 ```bash
 # Clone repository
-git clone https://github.com/rajeevrajchal/pmc.git
+git clone https://github.com/rajeevrajchal/pmc-google.git
 cd pmc
 
 # Install dependencies
