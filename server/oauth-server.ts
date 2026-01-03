@@ -13,7 +13,7 @@ export class OAuthServer {
    * Returns the callback URL that should be used for OAuth redirect
    */
   async start(): Promise<string> {
-    return "https://rajeevrajchal.github.io/pmc/oauth-callback";
+    return "https://rajeevrajchal.github.io/pmc-google/oauth-callback";
   }
 
   /**

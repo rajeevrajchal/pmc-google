@@ -8,6 +8,7 @@
 ## Features
 
 ### Event Insertion with Type-Ahead Search
+
 - **Quick Access**: Type `:` in any note to trigger the calendar event picker
 - **Smart Filtering**: Type `:meeting` to instantly filter events containing "meeting"
 - **Multi-field Search**: Searches across event titles, descriptions, locations, and attendees
@@ -15,11 +16,13 @@
 - **One-Click Insert**: Select an event to insert it as a clickable link in your note
 
 ### Create New Events
+
 - **In-app Creation**: Create new calendar events without leaving Obsidian
 - **Event Details**: Add title, date, time, description, and all-day event support
 - **Instant Link**: Automatically inserts a link to the newly created event
 
 ### Token Management
+
 - **Flexible Expiry**: Choose from 1 week, 1 month, 3 months, 6 months, or unlimited
 - **Unlimited Access**: Set token to never expire until manually disconnected
 - **Visual Status**: Real-time token status display in settings
@@ -27,6 +30,7 @@
 - **Clear Notifications**: Get notified when tokens expire and need reconnection
 
 ### Smart Caching
+
 - **5-Minute Cache**: Reduces API calls with intelligent event caching
 - **Background Sync**: Option to manually sync your calendar
 - **Configurable Range**: Set custom time range for event suggestions (default: 90 days)
@@ -34,6 +38,7 @@
 ## Installation
 
 ### From Obsidian Community Plugins (Recommended)
+
 1. Open Obsidian Settings
 2. Navigate to Community Plugins
 3. Search for "Pick Google Calendar Event"
@@ -41,6 +46,7 @@
 5. Enable the plugin
 
 ### Manual Installation
+
 1. Download the latest release from [GitHub Releases](https://github.com/rajeevrajchal/pmc/releases)
 2. Extract the files to your vault's `.obsidian/plugins/pick-google-calendar/` folder
 3. Reload Obsidian
@@ -70,9 +76,11 @@
    - Scopes: Add `calendar.readonly` and `calendar.events`
 4. Select "Web application" as the application type
 5. Add this Authorized redirect URI:
+
    ```
-   https://rajeevrajchal.github.io/pmc/oauth-callback
+   https://rajeevrajchal.github.io/pmc-google/oauth-callback
    ```
+
 6. Click "Create" and copy your Client ID
 
 ### Step 4: Configure Plugin
@@ -90,11 +98,13 @@
 ### Basic Usage
 
 #### Insert an Event
+
 1. In any note, type `:`
 2. A suggestion menu appears showing your upcoming events
 3. Select an event to insert it as a link: `[Event Name](Google Calendar Link)`
 
 #### Search and Filter
+
 1. Type `:` followed by your search query
 2. Example: `:team meeting` filters events containing "team meeting"
 3. The search works across:
@@ -104,6 +114,7 @@
    - Attendee names and emails
 
 #### Create New Event
+
 1. Type `:` to open the event picker
 2. Select "+ Create new event" at the top
 3. Fill in event details:
@@ -118,7 +129,9 @@
 ### Settings
 
 #### Token Expiry Options
+
 Choose how long your Google Calendar connection remains active:
+
 - **1 Week**: Token expires after 7 days
 - **1 Month**: Token expires after 30 days
 - **3 Months**: Token expires after 90 days
@@ -126,13 +139,17 @@ Choose how long your Google Calendar connection remains active:
 - **Unlimited**: Token never expires (until manually disconnected)
 
 #### Suggestion Time Range
+
 Configure how far into the past and future to search for events:
+
 - Default: 90 days
 - Searches 7 days in the past
 - Searches N days into the future (configurable)
 
 #### Token Status
+
 Visual indicator showing:
+
 - ✅ Token valid for X days
 - ✅ Token valid: Unlimited
 - ⚠️ Token expires in X days (within 24 hours)
@@ -141,6 +158,7 @@ Visual indicator showing:
 ## How It's Built
 
 ### Technology Stack
+
 - **TypeScript**: Full type safety and modern JavaScript features
 - **Obsidian API**: Native integration with Obsidian's editor
 - **Google Calendar API**: Direct communication with Google Calendar
@@ -174,6 +192,7 @@ pmc/
 ### Key Components
 
 #### EditorEventSuggestion (`event-suggestion.ts`)
+
 - Implements Obsidian's `EditorSuggest` interface
 - Triggers on `:` character
 - Real-time query filtering with regex pattern matching
@@ -181,18 +200,21 @@ pmc/
 - Multi-field search (title, description, location, attendees)
 
 #### GoogleCalendarAPI (`calendar-api.ts`)
+
 - RESTful API client for Google Calendar
 - Automatic token validation before each request
 - Methods: `fetchEvents`, `createEvent`, `updateEvent`, `deleteEvent`, `listCalendars`, `syncCalendar`
 - Error handling with user-friendly notices
 
 #### TokenManager (`token-manager.ts`)
+
 - Calculates expiry dates based on user settings
 - Validates tokens before API calls
 - Provides human-readable time remaining
 - Supports unlimited (never expiring) tokens
 
 #### OAuth Flow (`auth.ts` + `oauth-callback.html`)
+
 - Implements OAuth 2.0 implicit flow
 - Redirects to hosted callback page
 - Uses `obsidian://` protocol handler
@@ -201,19 +223,23 @@ pmc/
 ### Build Process
 
 #### Development
+
 ```bash
 pnpm install
 pnpm run dev
 ```
+
 - Watches for file changes
 - Enables source maps
 - No minification
 - Hot reload support
 
 #### Production
+
 ```bash
 pnpm run build
 ```
+
 - TypeScript compilation with type checking
 - esbuild bundling
 - Tree shaking for smaller bundle size
@@ -221,6 +247,7 @@ pnpm run build
 - Outputs to `main.js`
 
 #### Build Configuration
+
 - **Target**: ES2018
 - **Format**: CommonJS
 - **Entry**: `src/main.ts`
@@ -241,25 +268,33 @@ pnpm run build
 ## Troubleshooting
 
 ### Connection Issues
+
 **Problem**: "Failed to connect" error
+
 - **Solution**: Verify Client ID is correct
 - **Solution**: Ensure redirect URI is added to Google Cloud Console
 - **Solution**: Check OAuth consent screen configuration
 
 ### Token Expired
+
 **Problem**: "Token has expired" notification
+
 - **Solution**: Go to Settings → Pick Google Calendar Event
 - **Solution**: Click "Disconnect" then "Connect to Google"
 - **Solution**: Consider setting token expiry to "Unlimited"
 
 ### No Events Showing
+
 **Problem**: Event picker shows no results
+
 - **Solution**: Check if events exist in the time range (Settings → Suggestion Time Range)
 - **Solution**: Click "Sync Calendar" in settings
 - **Solution**: Try typing `:` without query to see all events
 
 ### API Errors
+
 **Problem**: "Failed to fetch events" error
+
 - **Solution**: Check internet connection
 - **Solution**: Verify Google Calendar API is enabled
 - **Solution**: Try reconnecting your account
@@ -275,6 +310,7 @@ Contributions are welcome! Please follow these steps:
 5. Open a Pull Request
 
 ### Development Setup
+
 ```bash
 # Clone repository
 git clone https://github.com/rajeevrajchal/pmc.git
@@ -303,12 +339,14 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 ## Author
 
 **Rajeev Rajchal**
+
 - Website: [rajeevrajchal.com.np](https://rajeevrajchal.com.np)
 - GitHub: [@rajeevrajchal](https://github.com/rajeevrajchal)
 
 ## Changelog
 
 ### v1.0.0 (2026-01-03)
+
 - Initial release
 - Type-ahead event search with `:` trigger
 - Multi-field search (title, description, location, attendees)
