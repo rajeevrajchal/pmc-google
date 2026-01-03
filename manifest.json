@@ -1,0 +1,11 @@
+{
+  "id": "pick-meeting-calendar",
+  "name": "Pick Meeting Calendar",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Insert Google Calendar events in your notes by typing @date. Create new events and sync your schedule without leaving Obsidian.",
+  "author": "Rajeev Rajchal",
+  "authorUrl": "https://rajeevrajchal.com.np",
+  "isDesktopOnly": false,
+  "manifest_version": 2
+}
