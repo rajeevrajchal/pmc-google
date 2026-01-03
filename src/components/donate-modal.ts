@@ -13,10 +13,9 @@ export class DonationModal extends Modal {
     contentEl.addClass("donation-modal");
 
     // Header
-    contentEl.createEl("h2", {
-      text: "❤️ Support Development",
-      cls: "donation-header",
-    });
+    new Setting(contentEl)
+      .setName("Support development")
+      .setHeading();
 
     // Description
     contentEl.createEl("p", {
@@ -26,7 +25,7 @@ export class DonationModal extends Modal {
 
     // Buy Me a Coffee
     new Setting(contentEl)
-      .setName("☕ Buy Me a Coffee")
+      .setName("Buy me a coffee")
       .setDesc("Support with a one-time donation")
       .addButton((btn) =>
         btn

@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Setting } from "obsidian";
+import { App, Modal, Notice, Setting, setIcon } from "obsidian";
 import PickMeetingCalendar from "../main";
 import { GoogleCalendarAPI, TokenManager } from "./tabs/google";
 
@@ -46,7 +46,9 @@ export class CreateEventModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    contentEl.createEl("h2", { text: "Create Calendar Event" });
+    new Setting(contentEl)
+      .setName("Create calendar event")
+      .setHeading();
 
     // Title
     new Setting(contentEl)
@@ -85,7 +87,11 @@ export class CreateEventModal extends Modal {
           // Toggle time inputs visibility
           const timeSettings = contentEl.querySelectorAll(".time-setting");
           timeSettings.forEach((el) => {
-            (el as HTMLElement).style.display = value ? "none" : "flex";
+            if (value) {
+              (el as HTMLElement).addClass("is-hidden");
+            } else {
+              (el as HTMLElement).removeClass("is-hidden");
+            }
           });
         }),
       );
@@ -132,15 +138,12 @@ export class CreateEventModal extends Modal {
             this.description = value;
           });
         text.inputEl.rows = 4;
-        text.inputEl.style.width = "100%";
       });
 
     // Buttons
     const buttonContainer = contentEl.createDiv({
       cls: "modal-button-container",
     });
-    buttonContainer.style.cssText =
-      "display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;";
 
     // Cancel button
     const cancelBtn = buttonContainer.createEl("button", { text: "Cancel" });
@@ -150,11 +153,11 @@ export class CreateEventModal extends Modal {
 
     // Create button
     const createBtn = buttonContainer.createEl("button", {
-      text: "Create Event",
+      text: "Create event",
       cls: "mod-cta",
     });
     createBtn.addEventListener("click", () => {
-      this.createEvent();
+      void this.createEvent();
     });
   }
 
@@ -193,7 +196,12 @@ export class CreateEventModal extends Modal {
 
     try {
       // Build event object
-      const event: any = {
+      const event: Partial<{
+        summary: string;
+        description?: string;
+        start: { date?: string; dateTime?: string; timeZone?: string };
+        end: { date?: string; dateTime?: string; timeZone?: string };
+      }> = {
         summary: this.title.trim(),
         description: this.description.trim() || undefined,
       };

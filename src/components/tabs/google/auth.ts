@@ -19,7 +19,7 @@ export class GoogleAuth {
    */
   static initiateOAuthFlow(clientId: string): void {
     if (!clientId || clientId.trim() === "") {
-      new Notice("Please configure Client ID first");
+      new Notice("Please configure client ID first");
       return;
     }
 

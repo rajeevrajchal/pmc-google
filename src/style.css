@@ -1,0 +1,77 @@
+/* PMC Plugin Styles */
+
+/* Intro section styling */
+.pmc-intro-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+}
+
+.pmc-usage-list {
+  margin-left: 20px;
+}
+
+/* Event suggestion container */
+.gcal-suggestion-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.gcal-suggestion-container.create-new {
+  color: var(--interactive-accent);
+  font-weight: 600;
+}
+
+.gcal-suggestion-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.gcal-event-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gcal-event-location {
+  font-size: 0.8em;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.gcal-suggestion-right {
+  flex-shrink: 0;
+  margin-left: 12px;
+  text-align: right;
+}
+
+.gcal-event-date {
+  font-size: 0.85em;
+  color: var(--text-muted);
+}
+
+.gcal-event-time {
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.gcal-event-conference {
+  font-size: 0.75em;
+  color: var(--interactive-accent);
+  margin-top: 2px;
+}
+
+/* Modal button container */
+.modal-button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}

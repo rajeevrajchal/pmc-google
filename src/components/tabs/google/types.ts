@@ -22,11 +22,11 @@ export type TokenExpiryOption =
   | "unlimited";
 
 export const TOKEN_EXPIRY_OPTIONS: Record<TokenExpiryOption, string> = {
-  "1week": "1 Week",
-  "1month": "1 Month",
-  "3months": "3 Months",
-  "6months": "6 Months",
-  unlimited: "Unlimited (Until manually disconnected)",
+  "1week": "1 week",
+  "1month": "1 month",
+  "3months": "3 months",
+  "6months": "6 months",
+  unlimited: "Unlimited (until manually disconnected)",
 };
 
 export const GOOGLE_OAUTH_CALLBACK_URL =

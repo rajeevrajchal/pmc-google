@@ -12,21 +12,26 @@ export class GoogleSettingsUI {
    */
   static renderSetupGuide(containerEl: HTMLElement): void {
     const setupSection = containerEl.createDiv({ cls: "pmc-setup-guide" });
-    setupSection.createEl("h4", { text: "📋 Setup Guide" });
+    new Setting(setupSection).setName("Setup guide").setHeading();
 
     const setupSteps = setupSection.createEl("ol");
 
     // Step 1: Create Google Cloud Project
     const step1 = setupSteps.createEl("li");
-    step1.createEl("strong", { text: "Create a Google Cloud Project:" });
+    step1.createEl("strong", { text: "Create a google cloud project:" });
     const step1List = step1.createEl("ul");
-    step1List.createEl("li").innerHTML =
-      'Go to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>';
-    step1List.createEl("li", {
-      text: 'Click "Select a project" → "New Project"',
+    const step1Item1 = step1List.createEl("li");
+    step1Item1.appendText("Go to ");
+    step1Item1.createEl("a", {
+      text: "Google Cloud Console",
+      href: "https://console.cloud.google.com/",
+      attr: { target: "_blank" },
     });
     step1List.createEl("li", {
-      text: 'Give it a name (e.g., "Obsidian PMC Plugin") and click "Create"',
+      text: 'Click "Select a project" → "New project"',
+    });
+    step1List.createEl("li", {
+      text: 'Give it a name (e.g., "Obsidian PMC plugin") and click "Create"',
     });
 
     // Step 2: Enable Google Calendar API
@@ -34,20 +39,20 @@ export class GoogleSettingsUI {
     step2.createEl("strong", { text: "Enable Google Calendar API:" });
     const step2List = step2.createEl("ul");
     step2List.createEl("li", {
-      text: 'In the sidebar, go to "APIs & Services" → "Library"',
+      text: 'In the sidebar, go to "APIs & services" → "Library"',
     });
     step2List.createEl("li", { text: 'Search for "Google Calendar API"' });
     step2List.createEl("li", { text: 'Click on it and press "Enable"' });
 
     // Step 3: Create OAuth Credentials
     const step3 = setupSteps.createEl("li");
-    step3.createEl("strong", { text: "Create OAuth 2.0 Credentials:" });
+    step3.createEl("strong", { text: "Create OAuth 2.0 credentials:" });
     const step3List = step3.createEl("ul");
     step3List.createEl("li", {
-      text: 'Go to "APIs & Services" → "Credentials"',
+      text: 'Go to "APIs & services" → "Credentials"',
     });
     step3List.createEl("li", {
-      text: 'Click "Create Credentials" → "OAuth client ID"',
+      text: 'Click "Create credentials" → "OAuth client ID"',
     });
     step3List.createEl("li", {
       text: "If prompted, configure the OAuth consent screen first",
@@ -56,16 +61,16 @@ export class GoogleSettingsUI {
       text: 'Select "Web application" as the application type',
     });
     step3List
-      .createEl("li", { text: "Add this Authorized redirect URI: " })
+      .createEl("li", { text: "Add this authorized redirect URI: " })
       .createEl("code", { text: GOOGLE_OAUTH_CALLBACK_URL });
     step3List.createEl("li", {
-      text: 'Click "Create" and copy your Client ID',
+      text: 'Click "Create" and copy your client ID',
     });
 
     // Step 4: Configure plugin
     const step4 = setupSteps.createEl("li");
     step4.createEl("strong", {
-      text: "Paste the Client ID below and click Connect",
+      text: "Paste the client ID below and click Connect",
     });
   }
 
@@ -74,14 +79,14 @@ export class GoogleSettingsUI {
    */
   static renderCallbackUrlSetting(containerEl: HTMLElement): void {
     new Setting(containerEl)
-      .setName("OAuth Callback URL")
+      .setName("OAuth callback URL")
       .setDesc("Use this URL when configuring your Google OAuth application")
       .addText((text) =>
         text.setValue(GOOGLE_OAUTH_CALLBACK_URL).setDisabled(true),
       )
       .addButton((btn) =>
-        btn.setButtonText("Copy").onClick(() => {
-          navigator.clipboard.writeText(GOOGLE_OAUTH_CALLBACK_URL);
+        btn.setButtonText("Copy").onClick(async () => {
+          await navigator.clipboard.writeText(GOOGLE_OAUTH_CALLBACK_URL);
           new Notice("Callback URL copied to clipboard!");
         }),
       );
@@ -97,7 +102,7 @@ export class GoogleSettingsUI {
   ): void {
     new Setting(containerEl)
       .setName("Client ID")
-      .setDesc("OAuth 2.0 Client ID from Google Cloud Console")
+      .setDesc("OAuth 2.0 client ID from Google Cloud Console")
       .addText((text) =>
         text
           .setPlaceholder("123456789-abcdefg.apps.googleusercontent.com")
@@ -156,7 +161,7 @@ export class GoogleSettingsUI {
       statusText = `✅ Token valid for ${timeRemaining}`;
     }
 
-    new Setting(containerEl).setName("Token Status").setDesc(statusText);
+    new Setting(containerEl).setName("Token status").setDesc(statusText);
   }
 
   /**
@@ -177,7 +182,7 @@ export class GoogleSettingsUI {
     if (isConnected) {
       // Sync Calendar button
       accountSetting.addButton((btn) =>
-        btn.setButtonText("Sync Calendar").onClick(async () => {
+        btn.setButtonText("Sync calendar").onClick(async () => {
           await onSync();
         }),
       );
@@ -194,7 +199,7 @@ export class GoogleSettingsUI {
     } else {
       // Show warning if no Client ID
       if (!clientId || clientId === "") {
-        accountSetting.setDesc("⚠️ Please set Client ID first");
+        accountSetting.setDesc("⚠️ Please set client ID first");
       } else {
         // Connect button
         accountSetting.addButton((btn) =>

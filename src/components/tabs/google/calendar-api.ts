@@ -1,4 +1,4 @@
-import { Notice } from "obsidian";
+import { Notice, requestUrl } from "obsidian";
 import { CalendarEvent } from "./types";
 import { TokenManager } from "./token-manager";
 
@@ -49,23 +49,16 @@ export class GoogleCalendarAPI {
 
       const queryString = new URLSearchParams(params).toString();
 
-      const response = await fetch(
-        `${this.BASE_URL}/calendars/${calendarId}/events?${queryString}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
+      const response = await requestUrl({
+        url: `${this.BASE_URL}/calendars/${calendarId}/events?${queryString}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
-      );
+      });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API Error Response:", errorText);
-        throw new Error(`Failed to fetch events: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = response.json;
       return data.items || [];
     } catch (error) {
       console.error("Error fetching calendar events:", error);
@@ -94,23 +87,17 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
-      const response = await fetch(
-        `${this.BASE_URL}/calendars/${calendarId}/events`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(event),
+      const response = await requestUrl({
+        url: `${this.BASE_URL}/calendars/${calendarId}/events`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(event),
+      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to create event: ${response.statusText}`);
-      }
-
-      const createdEvent = await response.json();
+      const createdEvent = response.json;
       new Notice("Event created successfully");
       return createdEvent;
     } catch (error) {
@@ -142,23 +129,17 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
-      const response = await fetch(
-        `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(event),
+      const response = await requestUrl({
+        url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(event),
+      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update event: ${response.statusText}`);
-      }
-
-      const updatedEvent = await response.json();
+      const updatedEvent = response.json;
       new Notice("Event updated successfully");
       return updatedEvent;
     } catch (error) {
@@ -187,19 +168,13 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
-      const response = await fetch(
-        `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      await requestUrl({
+        url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete event: ${response.statusText}`);
-      }
+      });
 
       new Notice("Event deleted successfully");
     } catch (error) {
@@ -215,25 +190,31 @@ export class GoogleCalendarAPI {
    * @param tokenExpiryDate - Optional token expiry date for validation
    * @returns Array of calendar objects
    */
-  static async listCalendars(accessToken: string, tokenExpiryDate?: number): Promise<any[]> {
+  static async listCalendars(accessToken: string, tokenExpiryDate?: number): Promise<Array<{
+    id: string;
+    summary: string;
+    description?: string;
+    timeZone?: string;
+    backgroundColor?: string;
+    foregroundColor?: string;
+    primary?: boolean;
+  }>> {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
-      const response = await fetch(`${this.BASE_URL}/users/me/calendarList`, {
+      const response = await requestUrl({
+        url: `${this.BASE_URL}/users/me/calendarList`,
+        method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch calendars: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = response.json;
       return data.items || [];
     } catch (error) {
       console.error("Error fetching calendars:", error);

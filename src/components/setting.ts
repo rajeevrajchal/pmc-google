@@ -10,7 +10,7 @@ import { GoogleCalendarAPI } from "./tabs/google/calendar-api";
 import { GoogleSettingsUI } from "./tabs/google/settings-ui";
 import { TokenManager } from "./tabs/google/token-manager";
 
-export interface PMCPluginSettingType extends GoogleCalendarSettings {}
+export type PMCPluginSettingType = GoogleCalendarSettings;
 
 export const DEFAULT_SETTINGS: PMCPluginSettingType = {
   ...DEFAULT_GOOGLE_SETTINGS,
@@ -29,31 +29,34 @@ export class PMCPluginSetting extends PluginSettingTab {
     containerEl.empty();
 
     // Title and description
-    containerEl.createEl("h2", { text: "Pick Google Calendar Event" });
-    
+    new Setting(containerEl).setName("Pick calendar event").setHeading();
+
     const introSection = containerEl.createDiv({ cls: "pmc-intro-section" });
-    introSection.style.marginBottom = "20px";
-    introSection.style.padding = "15px";
-    introSection.style.background = "var(--background-secondary)";
-    introSection.style.borderRadius = "8px";
-    
-    introSection.createEl("h4", { text: "How to Use" });
-    const usageList = introSection.createEl("ul");
-    usageList.style.marginLeft = "20px";
-    
+
+    new Setting(introSection).setName("How to use").setHeading();
+    const usageList = introSection.createEl("ul", { cls: "pmc-usage-list" });
+
     const item1 = usageList.createEl("li");
-    item1.innerHTML = "Type <code>:</code> in your note to trigger the calendar event picker";
-    
+    item1.appendText("Type ");
+    item1.createEl("code", { text: ":" });
+    item1.appendText(" in your note to trigger the calendar event picker");
+
     const item2 = usageList.createEl("li");
-    item2.innerHTML = "Type <code>:meeting</code> to search and filter events containing 'meeting'";
-    
+    item2.appendText("Type ");
+    item2.createEl("code", { text: ":meeting" });
+    item2.appendText(" to search and filter events containing 'meeting'");
+
     const item3 = usageList.createEl("li");
-    item3.innerHTML = "Select an event from the list to insert it as a link in your note";
-    
+    item3.appendText(
+      "Select an event from the list to insert it as a link in your note",
+    );
+
     const item4 = usageList.createEl("li");
-    item4.innerHTML = "Choose <strong>+ Create new event</strong> to create a new calendar event";
-    
-    containerEl.createEl("h3", { text: "Setup & Configuration" });
+    item4.appendText("Choose ");
+    item4.createEl("strong", { text: "+ Create new event" });
+    item4.appendText(" to create a new calendar event");
+
+    new Setting(containerEl).setName("Setup & configuration").setHeading();
 
     // Render setup guide
     GoogleSettingsUI.renderSetupGuide(containerEl);
@@ -85,7 +88,7 @@ export class PMCPluginSetting extends PluginSettingTab {
 
     //suggestion time range setting
     new Setting(containerEl)
-      .setName("Suggestion Time Range")
+      .setName("Suggestion time range")
       .setDesc(
         'Time duration to fetch calendar events for suggestions (e.g., "90 days"). Events from this many days in the past and future will be considered.',
       )

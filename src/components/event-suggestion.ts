@@ -173,40 +173,30 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     el.empty();
 
     const container = el.createDiv({ cls: "gcal-suggestion-container" });
-    container.style.cssText =
-      "display: flex; justify-content: space-between; align-items: center; padding: 4px 0;";
 
     if (item.isCreate) {
-      container.style.cssText +=
-        "color: var(--interactive-accent); font-weight: 600;";
+      container.addClass("create-new");
       container.createEl("span", { text: item.summary });
     } else if (item.event) {
       const event = item.event;
-      const leftDiv = container.createDiv();
-      leftDiv.style.cssText = "flex: 1; min-width: 0;";
+      const leftDiv = container.createDiv({ cls: "gcal-suggestion-left" });
 
       // Event title
-      const titleEl = leftDiv.createEl("div", {
-        text: event.summary || "Untitled Event",
+      leftDiv.createEl("div", {
+        text: event.summary || "Untitled event",
         cls: "gcal-event-title",
       });
-      titleEl.style.cssText =
-        "font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;";
 
       // Add location if available
       if (event.location) {
-        const locationEl = leftDiv.createEl("div", {
+        leftDiv.createEl("div", {
           text: event.location,
           cls: "gcal-event-location",
         });
-        locationEl.style.cssText =
-          "font-size: 0.8em; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;";
       }
 
       // Date and time on the right
-      const rightDiv = container.createDiv();
-      rightDiv.style.cssText =
-        "flex-shrink: 0; margin-left: 12px; text-align: right;";
+      const rightDiv = container.createDiv({ cls: "gcal-suggestion-right" });
 
       try {
         const startDate = new Date(
@@ -247,27 +237,23 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         }
 
         // Display date
-        const dateEl = rightDiv.createEl("div", {
+        rightDiv.createEl("div", {
           text: dateStr,
           cls: "gcal-event-date",
         });
-        dateEl.style.cssText = "font-size: 0.85em; color: var(--text-muted);";
 
         // Display time
-        const timeEl = rightDiv.createEl("div", {
+        rightDiv.createEl("div", {
           text: timeStr,
           cls: "gcal-event-time",
         });
-        timeEl.style.cssText = "font-size: 0.9em; font-weight: 500;";
 
         // Add conference indicator if available
         if (event.hangoutLink || event.conferenceData) {
-          const conferenceEl = rightDiv.createEl("div", {
+          rightDiv.createEl("div", {
             text: "🎥 Video",
             cls: "gcal-event-conference",
           });
-          conferenceEl.style.cssText =
-            "font-size: 0.75em; color: var(--interactive-accent); margin-top: 2px;";
         }
       } catch (e) {
         console.error("Error formatting date:", e);
