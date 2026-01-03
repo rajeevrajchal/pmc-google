@@ -6,7 +6,8 @@ import {
 import { Notice, Plugin } from "obsidian";
 import "./style.css";
 import { EditorEventSuggestion } from "components/event-suggestion";
-import { DonationModal } from "components/donate-modal";
+import { TokenManager } from "components/tabs/google/token-manager";
+import { TokenExpiryOption } from "components/tabs/google/types";
 
 export default class PMCPlugin extends Plugin {
   settings: PMCPluginSettingType;
@@ -20,21 +21,19 @@ export default class PMCPlugin extends Plugin {
     this.settingTab = new PMCPluginSetting(this.app, this);
     this.addSettingTab(this.settingTab);
 
-    // Add donate tab ❤️
-    this.addRibbonIcon(
-      "heart",
-      "Support Plugin Development",
-      (evt: MouseEvent) => {
-        new DonationModal(this.app).open();
-      },
-    );
-
     //google oauth callback handler
     this.registerObsidianProtocolHandler("pick-meeting-token", async (data) => {
       const token = data.access_token;
 
       if (token) {
         this.settings.accessToken = token;
+
+        // Calculate and store token expiry date based on user settings
+        const expiryOption = (this.settings.tokenExpiry ||
+          "unlimited") as TokenExpiryOption;
+        this.settings.tokenExpiryDate =
+          TokenManager.calculateExpiryDate(expiryOption);
+
         await this.saveSettings();
         this.settingTab?.display();
         new Notice("✅ Google Calendar Connected!");

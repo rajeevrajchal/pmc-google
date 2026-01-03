@@ -226,6 +226,7 @@ export class CreateEventModal extends Modal {
         this.plugin.settings.accessToken,
         event,
         "primary",
+        this.plugin.settings.tokenExpiryDate,
       );
 
       console.log("Event created:", createdEvent);

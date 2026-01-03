@@ -76,10 +76,7 @@ export class PMCPluginSetting extends PluginSettingTab {
       );
 
     // Render token status if connected
-    if (
-      this.plugin.settings.accessToken &&
-      this.plugin.settings.tokenExpiryDate
-    ) {
+    if (this.plugin.settings.accessToken) {
       GoogleSettingsUI.renderTokenStatus(
         containerEl,
         this.plugin.settings.tokenExpiryDate,
@@ -103,7 +100,10 @@ export class PMCPluginSetting extends PluginSettingTab {
         GoogleAuth.disconnect();
       },
       async () => {
-        await GoogleCalendarAPI.syncCalendar(this.plugin.settings.accessToken);
+        await GoogleCalendarAPI.syncCalendar(
+          this.plugin.settings.accessToken,
+          this.plugin.settings.tokenExpiryDate,
+        );
       },
     );
   }

@@ -139,17 +139,22 @@ export class GoogleSettingsUI {
     containerEl: HTMLElement,
     expiryDate: number | undefined,
   ): void {
-    if (!expiryDate) return;
-
     const timeRemaining = TokenManager.getTimeRemaining(expiryDate);
     const isExpired = TokenManager.isTokenExpired(expiryDate);
     const needsRefresh = TokenManager.needsRefreshSoon(expiryDate);
 
-    const statusText = isExpired
-      ? "⚠️ Token expired"
-      : needsRefresh
-        ? `⚠️ Token expires in ${timeRemaining}`
-        : `Token valid for ${timeRemaining}`;
+    let statusText: string;
+    
+    if (!expiryDate) {
+      // Unlimited token
+      statusText = "✅ Token valid: Unlimited";
+    } else if (isExpired) {
+      statusText = "⚠️ Token expired";
+    } else if (needsRefresh) {
+      statusText = `⚠️ Token expires in ${timeRemaining}`;
+    } else {
+      statusText = `✅ Token valid for ${timeRemaining}`;
+    }
 
     new Setting(containerEl).setName("Token Status").setDesc(statusText);
   }

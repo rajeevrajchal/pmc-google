@@ -1,5 +1,6 @@
 import { Notice } from "obsidian";
 import { CalendarEvent } from "./types";
+import { TokenManager } from "./token-manager";
 
 export class GoogleCalendarAPI {
   private static readonly BASE_URL = "https://www.googleapis.com/calendar/v3";
@@ -12,6 +13,7 @@ export class GoogleCalendarAPI {
    * @param timeMin - Start time for events (ISO 8601)
    * @param timeMax - End time for events (ISO 8601)
    * @param maxResults - Maximum number of events to return
+   * @param tokenExpiryDate - Optional token expiry date for validation
    * @returns Array of calendar events
    */
   static async fetchEvents(
@@ -21,8 +23,14 @@ export class GoogleCalendarAPI {
     timeMin?: string,
     timeMax?: string,
     maxResults: number = 250,
+    tokenExpiryDate?: number,
   ): Promise<CalendarEvent[]> {
     try {
+      // Validate token before making API call
+      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        throw new Error("Token expired");
+      }
       const params: Record<string, string> = {
         singleEvents: "true",
         orderBy: "startTime",
@@ -71,14 +79,21 @@ export class GoogleCalendarAPI {
    * @param accessToken - OAuth access token
    * @param event - Event details to create
    * @param calendarId - Calendar ID (defaults to 'primary')
+   * @param tokenExpiryDate - Optional token expiry date for validation
    * @returns Created event
    */
   static async createEvent(
     accessToken: string,
     event: Partial<CalendarEvent>,
     calendarId: string = "primary",
+    tokenExpiryDate?: number,
   ): Promise<CalendarEvent> {
     try {
+      // Validate token before making API call
+      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        throw new Error("Token expired");
+      }
       const response = await fetch(
         `${this.BASE_URL}/calendars/${calendarId}/events`,
         {
@@ -111,6 +126,7 @@ export class GoogleCalendarAPI {
    * @param eventId - ID of the event to update
    * @param event - Updated event details
    * @param calendarId - Calendar ID (defaults to 'primary')
+   * @param tokenExpiryDate - Optional token expiry date for validation
    * @returns Updated event
    */
   static async updateEvent(
@@ -118,8 +134,14 @@ export class GoogleCalendarAPI {
     eventId: string,
     event: Partial<CalendarEvent>,
     calendarId: string = "primary",
+    tokenExpiryDate?: number,
   ): Promise<CalendarEvent> {
     try {
+      // Validate token before making API call
+      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        throw new Error("Token expired");
+      }
       const response = await fetch(
         `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         {
@@ -151,13 +173,20 @@ export class GoogleCalendarAPI {
    * @param accessToken - OAuth access token
    * @param eventId - ID of the event to delete
    * @param calendarId - Calendar ID (defaults to 'primary')
+   * @param tokenExpiryDate - Optional token expiry date for validation
    */
   static async deleteEvent(
     accessToken: string,
     eventId: string,
     calendarId: string = "primary",
+    tokenExpiryDate?: number,
   ): Promise<void> {
     try {
+      // Validate token before making API call
+      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        throw new Error("Token expired");
+      }
       const response = await fetch(
         `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         {
@@ -183,10 +212,16 @@ export class GoogleCalendarAPI {
   /**
    * Get list of available calendars
    * @param accessToken - OAuth access token
+   * @param tokenExpiryDate - Optional token expiry date for validation
    * @returns Array of calendar objects
    */
-  static async listCalendars(accessToken: string): Promise<any[]> {
+  static async listCalendars(accessToken: string, tokenExpiryDate?: number): Promise<any[]> {
     try {
+      // Validate token before making API call
+      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        throw new Error("Token expired");
+      }
       const response = await fetch(`${this.BASE_URL}/users/me/calendarList`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -210,9 +245,15 @@ export class GoogleCalendarAPI {
   /**
    * Sync calendar events (fetch and cache)
    * @param accessToken - OAuth access token
+   * @param tokenExpiryDate - Optional token expiry date for validation
    */
-  static async syncCalendar(accessToken: string): Promise<void> {
+  static async syncCalendar(accessToken: string, tokenExpiryDate?: number): Promise<void> {
     try {
+      // Validate token before making API call
+      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        throw new Error("Token expired");
+      }
       new Notice("Syncing calendar...");
 
       // Fetch events for the next 30 days

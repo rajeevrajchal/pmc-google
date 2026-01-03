@@ -37,11 +37,17 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     const line = editor.getLine(cursor.line);
     const textBeforeCursor = line.substring(0, cursor.ch);
 
-    if (textBeforeCursor.endsWith(":")) {
+    // Check if there's a ':' trigger in the line
+    const colonMatch = textBeforeCursor.match(/:([\w\s]*)$/);
+
+    if (colonMatch) {
+      const query = colonMatch[1] || "";
+      const startCh = cursor.ch - colonMatch[0].length + 1; // +1 to skip the ':'
+
       return {
-        start: { line: cursor.line, ch: cursor.ch - 1 },
+        start: { line: cursor.line, ch: startCh },
         end: cursor,
-        query: "",
+        query: query,
       };
     }
 
@@ -54,9 +60,9 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
 
     if (shouldRefetch || this.cachedEvents.length === 0) {
       try {
-        // Fetch events for the next 30 days and past 7 days
+        // Fetch events for the next 30 days and past 1 days
         const timeMin = new Date(
-          Date.now() - 7 * 24 * 60 * 60 * 1000,
+          Date.now() - 1 * 24 * 60 * 60 * 1000,
         ).toISOString();
         const timeMax = new Date(
           Date.now() + this.plugin.settings.timeRange * 24 * 60 * 60 * 1000,
@@ -68,6 +74,8 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
           undefined,
           timeMin,
           timeMax,
+          250,
+          this.plugin.settings.tokenExpiryDate,
         );
         this.lastFetchTime = now;
       } catch (error) {
