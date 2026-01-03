@@ -68,8 +68,11 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
           Date.now() + this.plugin.settings.timeRange * 24 * 60 * 60 * 1000,
         ).toISOString();
 
+        // Get valid access token (will refresh if needed)
+        const accessToken = await this.plugin.getValidAccessToken();
+        
         this.cachedEvents = await GoogleCalendarAPI.fetchEvents(
-          this.plugin.settings.accessToken,
+          accessToken,
           "primary",
           undefined,
           timeMin,

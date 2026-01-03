@@ -2,7 +2,8 @@
  * Token expiry and refresh management for Google Calendar
  */
 
-import { TokenExpiryOption } from "./types";
+import { requestUrl } from "obsidian";
+import { TokenExpiryOption, TokenRefreshResponse, GOOGLE_TOKEN_REFRESH_URL } from "./types";
 
 export class TokenManager {
   /**
@@ -108,5 +109,83 @@ export class TokenManager {
       hour: "2-digit",
       minute: "2-digit",
     });
+  }
+
+  /**
+   * Check if access token needs refresh (expires in less than 5 minutes)
+   * @param accessTokenExpiresAt - Unix timestamp when access token expires
+   * @returns true if access token needs refresh
+   */
+  static needsAccessTokenRefresh(accessTokenExpiresAt: number | undefined): boolean {
+    if (!accessTokenExpiresAt) {
+      return false;
+    }
+
+    const fiveMinutesInMs = 5 * 60 * 1000;
+    const remaining = accessTokenExpiresAt - Date.now();
+
+    return remaining <= fiveMinutesInMs;
+  }
+
+  /**
+   * Refresh the access token using the refresh token
+   * @param refreshToken - The refresh token
+   * @param clientId - OAuth client ID
+   * @param clientSecret - OAuth client secret
+   * @returns New access token and expiry time
+   */
+  static async refreshAccessToken(
+    refreshToken: string,
+    clientId: string,
+    clientSecret: string
+  ): Promise<{ accessToken: string; expiresAt: number }> {
+    try {
+      const response = await requestUrl({
+        url: GOOGLE_TOKEN_REFRESH_URL,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refresh_token: refreshToken,
+          client_id: clientId,
+          client_secret: clientSecret,
+        }),
+      });
+
+      const data: TokenRefreshResponse = response.json;
+
+      // Calculate when the new access token expires
+      const expiresAt = Date.now() + (data.expires_in * 1000);
+
+      return {
+        accessToken: data.access_token,
+        expiresAt,
+      };
+    } catch (error) {
+      console.error("Failed to refresh access token:", error);
+      throw new Error("Failed to refresh access token");
+    }
+  }
+
+  /**
+   * Validate if an access token is still valid by making a test request
+   * @param accessToken - The access token to validate
+   * @returns true if token is valid
+   */
+  static async validateAccessToken(accessToken: string): Promise<boolean> {
+    try {
+      const response = await requestUrl({
+        url: "https://www.googleapis.com/oauth2/v1/tokeninfo",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      return response.status === 200;
+    } catch (error) {
+      return false;
+    }
   }
 }

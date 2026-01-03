@@ -58,6 +58,9 @@ export class PMCPluginSetting extends PluginSettingTab {
 
     new Setting(containerEl).setName("Setup & configuration").setHeading();
 
+    // Render security notice
+    GoogleSettingsUI.renderSecurityNotice(containerEl);
+
     // Render setup guide
     GoogleSettingsUI.renderSetupGuide(containerEl);
     // Render OAuth callback URL
@@ -68,6 +71,16 @@ export class PMCPluginSetting extends PluginSettingTab {
       this.plugin.settings.clientId,
       async (clientId: string) => {
         this.plugin.settings.clientId = clientId;
+        await this.plugin.saveSettings();
+        this.display();
+      },
+    );
+    // Render Client Secret input
+    GoogleSettingsUI.renderClientSecretSetting(
+      containerEl,
+      this.plugin.settings.clientSecret || "",
+      async (clientSecret: string) => {
+        this.plugin.settings.clientSecret = clientSecret;
         await this.plugin.saveSettings();
         this.display();
       },

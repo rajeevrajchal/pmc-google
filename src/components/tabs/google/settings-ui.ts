@@ -8,6 +8,35 @@ import { TokenManager } from "./token-manager";
 
 export class GoogleSettingsUI {
   /**
+   * Render security notice
+   */
+  static renderSecurityNotice(containerEl: HTMLElement): void {
+    const securitySection = containerEl.createDiv({ cls: "pmc-security-notice" });
+    
+    new Setting(securitySection)
+      .setName("Security & privacy")
+      .setHeading();
+
+    const noticeEl = securitySection.createDiv({ cls: "setting-item-description" });
+    noticeEl.style.marginBottom = "15px";
+    noticeEl.style.padding = "10px";
+    noticeEl.style.background = "var(--background-modifier-message)";
+    noticeEl.style.borderRadius = "4px";
+    
+    noticeEl.createEl("p", {
+      text: "🔐 Your tokens are encrypted and stored locally in your vault.",
+    });
+    
+    noticeEl.createEl("p", {
+      text: "ℹ️ This plugin uses OAuth refresh tokens for improved security. Access tokens expire after 1 hour and are automatically refreshed.",
+    });
+    
+    const warningEl = noticeEl.createEl("p");
+    warningEl.createEl("strong", { text: "Important: " });
+    warningEl.appendText("While tokens are encrypted, any plugin running in Obsidian could potentially access them. Only install trusted plugins.");
+  }
+
+  /**
    * Render setup guide with step-by-step instructions
    */
   static renderSetupGuide(containerEl: HTMLElement): void {
@@ -111,6 +140,30 @@ export class GoogleSettingsUI {
             await onSave(value.trim());
           }),
       );
+  }
+
+  /**
+   * Render Client Secret input setting
+   */
+  static renderClientSecretSetting(
+    containerEl: HTMLElement,
+    currentClientSecret: string,
+    onSave: (clientSecret: string) => Promise<void>,
+  ): void {
+    new Setting(containerEl)
+      .setName("Client secret")
+      .setDesc("OAuth 2.0 client secret from Google Cloud Console (required for refresh tokens)")
+      .addText((text) => {
+        text
+          .setPlaceholder("GOCSPX-xxxxxxxxxxxxxxxxxxxxx")
+          .setValue(currentClientSecret ? "••••••••••••••••" : "")
+          .onChange(async (value) => {
+            if (value && value !== "••••••••••••••••") {
+              await onSave(value.trim());
+            }
+          });
+        text.inputEl.type = "password";
+      });
   }
 
   /**
