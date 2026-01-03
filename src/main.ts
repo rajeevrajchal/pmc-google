@@ -4,10 +4,11 @@ import {
   PMCPluginSettingType,
 } from "components/setting";
 import { Notice, Plugin } from "obsidian";
-import "./style.css";
 import { EditorEventSuggestion } from "components/event-suggestion";
 import { TokenManager } from "components/tabs/google/token-manager";
 import { TokenExpiryOption } from "components/tabs/google/types";
+import { CryptoUtil } from "components/tabs/google/crypto-util";
+import { SettingsEncryption } from "components/settings-encryption";
 
 export default class PMCPlugin extends Plugin {
   settings: PMCPluginSettingType;
@@ -26,17 +27,23 @@ export default class PMCPlugin extends Plugin {
       const token = data.access_token;
 
       if (token) {
-        this.settings.accessToken = token;
+        try {
+          // Store the access token (will be encrypted automatically by saveSettings)
+          this.settings.accessToken = token;
 
-        // Calculate and store token expiry date based on user settings
-        const expiryOption = (this.settings.tokenExpiry ||
-          "unlimited") as TokenExpiryOption;
-        this.settings.tokenExpiryDate =
-          TokenManager.calculateExpiryDate(expiryOption);
+          // Calculate and store token expiry date based on user settings
+          const expiryOption = (this.settings.tokenExpiry ||
+            "unlimited") as TokenExpiryOption;
+          this.settings.tokenExpiryDate =
+            TokenManager.calculateExpiryDate(expiryOption);
 
-        await this.saveSettings();
-        this.settingTab?.display();
-        new Notice("✅ Google Calendar Connected!");
+          await this.saveSettings();
+          this.settingTab?.display();
+          new Notice("✅ Google Calendar Connected!");
+        } catch (error) {
+          console.error("Failed to save access token:", error);
+          new Notice("❌ Failed to secure access token");
+        }
       } else {
         new Notice(
           `❌ Connection failed: ${data.error || "No token found in response"}`,
@@ -52,14 +59,30 @@ export default class PMCPlugin extends Plugin {
   onunload() {}
 
   async loadSettings() {
-    this.settings = Object.assign(
+    const loadedData = (await this.loadData()) as Partial<PMCPluginSettingType>;
+    const mergedSettings = Object.assign(
       {},
       DEFAULT_SETTINGS,
-      (await this.loadData()) as Partial<PMCPluginSettingType>,
+      loadedData,
     );
+
+    // Decrypt sensitive fields after loading
+    this.settings = await SettingsEncryption.decryptSettings(mergedSettings);
+
+    // Migrate existing unencrypted settings to encrypted format
+    const { settings: migratedSettings, migrated } = 
+      await SettingsEncryption.migrateToEncrypted(this.settings);
+    
+    if (migrated) {
+      this.settings = migratedSettings;
+      await this.saveSettings();
+      new Notice("Settings have been encrypted for enhanced security");
+    }
   }
 
   async saveSettings() {
-    await this.saveData(this.settings);
+    // Encrypt sensitive fields before saving
+    const encryptedSettings = await SettingsEncryption.encryptSettings(this.settings);
+    await this.saveData(encryptedSettings);
   }
 }

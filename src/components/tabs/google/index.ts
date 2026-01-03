@@ -11,3 +11,6 @@ export { GoogleCalendarAPI } from "./calendar-api";
 
 // Export settings UI components
 export { GoogleSettingsUI } from "./settings-ui";
+
+// Export crypto utilities
+export { CryptoUtil } from "./crypto-util";

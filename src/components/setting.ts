@@ -62,7 +62,7 @@ export class PMCPluginSetting extends PluginSettingTab {
     GoogleSettingsUI.renderSetupGuide(containerEl);
     // Render OAuth callback URL
     GoogleSettingsUI.renderCallbackUrlSetting(containerEl);
-    // Render Client ID input
+    // Render Client ID input (async)
     GoogleSettingsUI.renderClientIdSetting(
       containerEl,
       this.plugin.settings.clientId,
@@ -71,7 +71,9 @@ export class PMCPluginSetting extends PluginSettingTab {
         await this.plugin.saveSettings();
         this.display();
       },
-    );
+    ).catch((error) => {
+      console.error("Failed to render client ID setting:", error);
+    });
 
     // Render Token Expiry setting
     GoogleSettingsUI.renderTokenExpirySetting(
@@ -115,9 +117,9 @@ export class PMCPluginSetting extends PluginSettingTab {
       containerEl,
       !!this.plugin.settings.accessToken,
       this.plugin.settings.clientId,
-      () => {
-        // On Connect
-        GoogleAuth.initiateOAuthFlow(this.plugin.settings.clientId);
+      (decryptedClientId: string) => {
+        // On Connect - receives already decrypted client ID from renderAccountSetting
+        GoogleAuth.initiateOAuthFlow(decryptedClientId);
       },
       async () => {
         this.plugin.settings.accessToken = "";

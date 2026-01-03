@@ -31,6 +31,8 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
+
+      // Access token is already decrypted by SettingsEncryption
       const params: Record<string, string> = {
         singleEvents: "true",
         orderBy: "startTime",
@@ -87,6 +89,8 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
+
+      // Access token is already decrypted by SettingsEncryption
       const response = await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events`,
         method: "POST",
@@ -129,6 +133,8 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
+
+      // Access token is already decrypted by SettingsEncryption
       const response = await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         method: "PUT",
@@ -168,6 +174,8 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
+
+      // Access token is already decrypted by SettingsEncryption
       await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         method: "DELETE",
@@ -205,6 +213,8 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
+
+      // Access token is already decrypted by SettingsEncryption
       const response = await requestUrl({
         url: `${this.BASE_URL}/users/me/calendarList`,
         method: "GET",
@@ -235,6 +245,8 @@ export class GoogleCalendarAPI {
         new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
         throw new Error("Token expired");
       }
+
+      // Access token is already decrypted by SettingsEncryption
       new Notice("Syncing calendar...");
 
       // Fetch events for the next 30 days

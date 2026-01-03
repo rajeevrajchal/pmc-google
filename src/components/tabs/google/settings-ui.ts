@@ -95,20 +95,24 @@ export class GoogleSettingsUI {
   /**
    * Render Client ID input setting
    */
-  static renderClientIdSetting(
+  static async renderClientIdSetting(
     containerEl: HTMLElement,
     currentClientId: string,
     onSave: (clientId: string) => Promise<void>,
-  ): void {
+  ): Promise<void> {
+    // Client ID is now automatically decrypted by SettingsEncryption
+    // We can use it directly without manual encryption/decryption
     new Setting(containerEl)
       .setName("Client ID")
-      .setDesc("OAuth 2.0 client ID from Google Cloud Console")
+      .setDesc("OAuth 2.0 client ID from Google Cloud Console (stored encrypted)")
       .addText((text) =>
         text
           .setPlaceholder("123456789-abcdefg.apps.googleusercontent.com")
           .setValue(currentClientId)
           .onChange(async (value) => {
-            await onSave(value.trim());
+            const trimmedValue = value.trim();
+            // No need to encrypt - SettingsEncryption handles this automatically
+            await onSave(trimmedValue);
           }),
       );
   }
@@ -171,7 +175,7 @@ export class GoogleSettingsUI {
     containerEl: HTMLElement,
     isConnected: boolean,
     clientId: string,
-    onConnect: () => void,
+    onConnect: (clientId: string) => void,
     onDisconnect: () => Promise<void>,
     onSync: () => Promise<void>,
   ): void {
@@ -201,13 +205,13 @@ export class GoogleSettingsUI {
       if (!clientId || clientId === "") {
         accountSetting.setDesc("⚠️ Please set client ID first");
       } else {
-        // Connect button
+        // Connect button - client ID is already decrypted by SettingsEncryption
         accountSetting.addButton((btn) =>
           btn
             .setCta()
             .setButtonText("Connect to Google")
             .onClick(() => {
-              onConnect();
+              onConnect(clientId);
             }),
         );
       }
