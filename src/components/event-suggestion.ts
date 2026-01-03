@@ -276,20 +276,24 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     }
 
     if (item.isCreate) {
+      // Capture context values before opening modal
+      // The modal may clear this.context, so we need to preserve it
+      const editor = this.context.editor;
+      const start = { ...this.context.start };
+      const end = { ...this.context.end };
+      const query = this.context.query;
+
       new CreateEventModal(
         this.app,
         this.plugin,
-        this.context.query,
+        query,
         (eventData) => {
-          if (this.context) {
-            // Insert the created event as a link
-            const formattedText = `[${eventData.title}](${eventData.link})`;
-            this.context.editor.replaceRange(
-              formattedText,
-              this.context.start,
-              this.context.end,
-            );
-          }
+          // Insert the created event as a link using captured context
+          const formattedText = `[${eventData.title}](${eventData.link})`;
+          editor.replaceRange(formattedText, start, end);
+          
+          // Clear cache to fetch the newly created event next time
+          this.clearCache();
         },
       ).open();
     } else if (item.event) {
