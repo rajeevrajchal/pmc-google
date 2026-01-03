@@ -1,7 +1,6 @@
 import tseslint from "typescript-eslint";
 import obsidianmd from "eslint-plugin-obsidianmd";
 import globals from "globals";
-import type { Linter } from "eslint";
 
 export default tseslint.config(
   {
@@ -22,7 +21,9 @@ export default tseslint.config(
     plugins: {
       obsidianmd,
     },
-    rules: (obsidianmd.configs?.recommended || {}) as Linter.RulesRecord,
+    rules: {
+      ...(obsidianmd.configs?.recommended?.rules || {}),
+    },
   },
   {
     ignores: [
