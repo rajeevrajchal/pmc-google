@@ -28,8 +28,32 @@ export class PMCPluginSetting extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    // Title
-    containerEl.createEl("h3", { text: "Google Calendar Integration" });
+    // Title and description
+    containerEl.createEl("h2", { text: "Pick Google Calendar Event" });
+    
+    const introSection = containerEl.createDiv({ cls: "pmc-intro-section" });
+    introSection.style.marginBottom = "20px";
+    introSection.style.padding = "15px";
+    introSection.style.background = "var(--background-secondary)";
+    introSection.style.borderRadius = "8px";
+    
+    introSection.createEl("h4", { text: "How to Use" });
+    const usageList = introSection.createEl("ul");
+    usageList.style.marginLeft = "20px";
+    
+    const item1 = usageList.createEl("li");
+    item1.innerHTML = "Type <code>:</code> in your note to trigger the calendar event picker";
+    
+    const item2 = usageList.createEl("li");
+    item2.innerHTML = "Type <code>:meeting</code> to search and filter events containing 'meeting'";
+    
+    const item3 = usageList.createEl("li");
+    item3.innerHTML = "Select an event from the list to insert it as a link in your note";
+    
+    const item4 = usageList.createEl("li");
+    item4.innerHTML = "Choose <strong>+ Create new event</strong> to create a new calendar event";
+    
+    containerEl.createEl("h3", { text: "Setup & Configuration" });
 
     // Render setup guide
     GoogleSettingsUI.renderSetupGuide(containerEl);

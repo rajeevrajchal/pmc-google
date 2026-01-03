@@ -33,20 +33,20 @@ export class DonationModal extends Modal {
           .setButtonText("Donate")
           .setCta()
           .onClick(() => {
-            window.open("https://www.buymeacoffee.com/yourusername", "_blank");
+            window.open("https://www.buymeacoffee.com/rajeevrajchal", "_blank");
           }),
       );
 
-    // GitHub Sponsors (optional)
-    new Setting(contentEl)
-      .setName("⭐ GitHub Sponsors")
-      .setDesc("Sponsor on GitHub for recurring support")
-      .addButton((btn) =>
-        btn.setButtonText("Become a Sponsor").onClick(() => {
-          window.open("https://github.com/sponsors/yourusername", "_blank");
-        }),
-      );
-
+    // // GitHub Sponsors (optional)
+    // new Setting(contentEl)
+    //   .setName("⭐ GitHub Sponsors")
+    //   .setDesc("Sponsor on GitHub for recurring support")
+    //   .addButton((btn) =>
+    //     btn.setButtonText("Become a Sponsor").onClick(() => {
+    //       window.open("https://github.com/sponsors/yourusername", "_blank");
+    //     }),
+    //   );
+    //
     // Thank you message
     contentEl.createEl("p", {
       text: "Thank you for your support! Every contribution helps improve this plugin. 🙏",
