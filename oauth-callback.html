@@ -69,8 +69,6 @@
           encodeURIComponent(accessToken) +
           (expiresIn ? "&expires_in=" + encodeURIComponent(expiresIn) : "");
 
-        console.log("Redirecting to:", obsidianUrl);
-
         // Redirect to Obsidian
         window.location.href = obsidianUrl;
 

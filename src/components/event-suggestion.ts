@@ -133,7 +133,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     context: EditorSuggestContext,
   ): Promise<EventSuggestion[]> {
     if (this.plugin.settings.accessToken === "") {
-      console.log("connect google calendar first");
       new Notice("Please connect to Google Calendar first");
       return [];
     }
@@ -145,8 +144,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
 
       // Filter events based on query
       const filteredEvents = this.filterEvents(allEvents, query);
-
-      console.log("filtered events", filteredEvents);
 
       // Return create option + filtered events
       const suggestions: EventSuggestion[] = [];

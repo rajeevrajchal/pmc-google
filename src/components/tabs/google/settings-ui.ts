@@ -144,7 +144,7 @@ export class GoogleSettingsUI {
     const needsRefresh = TokenManager.needsRefreshSoon(expiryDate);
 
     let statusText: string;
-    
+
     if (!expiryDate) {
       // Unlimited token
       statusText = "✅ Token valid: Unlimited";
@@ -170,8 +170,6 @@ export class GoogleSettingsUI {
     onDisconnect: () => Promise<void>,
     onSync: () => Promise<void>,
   ): void {
-    console.log("is connected:", isConnected);
-
     const accountSetting = new Setting(containerEl)
       .setName("Account")
       .setDesc(isConnected ? "✅ Connected" : "❌ Not Connected");

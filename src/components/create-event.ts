@@ -177,13 +177,17 @@ export class CreateEventModal extends Modal {
 
     // Check if access token exists
     if (!this.plugin.settings.accessToken) {
-      new Notice("❌ Not authenticated. Please connect your Google account in settings.");
+      new Notice(
+        "❌ Not authenticated. Please connect your Google account in settings.",
+      );
       return;
     }
 
     // Check if token has expired
     if (TokenManager.isTokenExpired(this.plugin.settings.tokenExpiryDate)) {
-      new Notice("❌ Access token has expired. Please reconnect your Google account in settings.");
+      new Notice(
+        "❌ Access token has expired. Please reconnect your Google account in settings.",
+      );
       return;
     }
 
@@ -219,8 +223,6 @@ export class CreateEventModal extends Modal {
         };
       }
 
-      console.log("Creating event:", event);
-
       // Create event via API
       const createdEvent = await GoogleCalendarAPI.createEvent(
         this.plugin.settings.accessToken,
@@ -228,8 +230,6 @@ export class CreateEventModal extends Modal {
         "primary",
         this.plugin.settings.tokenExpiryDate,
       );
-
-      console.log("Event created:", createdEvent);
 
       // Get the event link
       const eventLink =
@@ -247,8 +247,8 @@ export class CreateEventModal extends Modal {
 
       this.close();
     } catch (error) {
-      console.error("Error creating event:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       new Notice(`❌ Failed to create event: ${errorMessage}`);
     }
   }
