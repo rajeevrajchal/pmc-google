@@ -1,6 +1,6 @@
-# Pick Google Calendar Event
+# Pick Google Calendar
 
-> Seamlessly integrate your Google Calendar with Obsidian. Quickly insert calendar events into your notes with intelligent type-ahead search.
+> Seamlessly integrate your Google Calendar with your notes. Quickly insert calendar events with intelligent type-ahead search.
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support-orange?style=flat-square&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/rajeevrajchal)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)](https://github.com/rajeevrajchal/pmc)
@@ -37,11 +37,11 @@
 
 ## Installation
 
-### From Obsidian Community Plugins (Recommended)
+### From Community Plugins (Recommended)
 
-1. Open Obsidian Settings
+1. Open Settings
 2. Navigate to Community Plugins
-3. Search for "Pick Google Calendar Event"
+3. Search for "Pick Google Calendar"
 4. Click Install
 5. Enable the plugin
 
@@ -49,7 +49,7 @@
 
 1. Download the latest release from [GitHub Releases](https://github.com/rajeevrajchal/pmc-google/releases)
 2. Extract the files to your vault's `.obsidian/plugins/pick-google-calendar/` folder
-3. Reload Obsidian
+3. Reload
 4. Enable the plugin in Settings → Community Plugins
 
 ## Setup
@@ -58,7 +58,7 @@
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click "Select a project" → "New Project"
-3. Give it a name (e.g., "Obsidian PMC Plugin") and click "Create"
+3. Give it a name (e.g., "Pick Google Calendar Plugin") and click "Create"
 
 ### Step 2: Enable Google Calendar API
 
@@ -85,13 +85,13 @@
 
 ### Step 4: Configure Plugin
 
-1. Open Obsidian Settings → Pick Google Calendar Event
+1. Open Settings → Pick Google Calendar
 2. Paste your Client ID
 3. Configure token expiry (default: Unlimited)
 4. Set your preferred time range for suggestions (default: 90 days)
 5. Click "Connect to Google"
 6. Authorize the application in your browser
-7. Return to Obsidian - you're ready to go!
+7. Return - you're ready to go!
 
 ## Usage
 
@@ -160,7 +160,6 @@ Visual indicator showing:
 ### Technology Stack
 
 - **TypeScript**: Full type safety and modern JavaScript features
-- **Obsidian API**: Native integration with Obsidian's editor
 - **Google Calendar API**: Direct communication with Google Calendar
 - **esbuild**: Fast bundling and development workflow
 
@@ -193,7 +192,6 @@ pmc/
 
 #### EditorEventSuggestion (`event-suggestion.ts`)
 
-- Implements Obsidian's `EditorSuggest` interface
 - Triggers on `:` character
 - Real-time query filtering with regex pattern matching
 - 5-minute cache for API responses
@@ -252,7 +250,6 @@ pnpm run build
 - **Format**: CommonJS
 - **Entry**: `src/main.ts`
 - **Output**: `main.js`
-- **Externals**: Obsidian API, Electron, CodeMirror
 - **Minify**: Production only
 
 ## Privacy & Security
@@ -279,7 +276,7 @@ pnpm run build
 
 **Problem**: "Token has expired" notification
 
-- **Solution**: Go to Settings → Pick Google Calendar Event
+- **Solution**: Go to Settings → Pick Google Calendar
 - **Solution**: Click "Disconnect" then "Connect to Google"
 - **Solution**: Consider setting token expiry to "Unlimited"
 
@@ -359,4 +356,4 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ for the Obsidian community
+Made with ❤️ for the community

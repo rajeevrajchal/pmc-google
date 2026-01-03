@@ -1,14 +1,13 @@
 {
   "id": "pick-google-calendar",
-  "name": "Pick Google Calendar Event",
+  "name": "Pick Google Calendar",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "Insert Google Calendar events in your notes by typing 'text: <query>'. Create new events and sync your schedule without leaving Obsidian.",
+  "description": "Insert Google Calendar events in your notes by typing 'text: <query>'. Create new events and sync your schedule seamlessly.",
   "author": "Rajeev Rajchal",
   "authorUrl": "https://rajeevrajchal.com.np",
   "fundingUrl": {
     "Buy Me a Coffee": "https://www.buymeacoffee.com/rajeevrajchal"
   },
-  "isDesktopOnly": false,
-  "manifest_version": 2
+  "isDesktopOnly": false
 }
