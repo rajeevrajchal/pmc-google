@@ -38,7 +38,7 @@ export default class PMCPlugin extends Plugin {
 
           await this.saveSettings();
           this.settingTab?.display();
-          new Notice("✅ Google Calendar Connected!");
+          new Notice("Google calendar connected");
         } catch (error) {
           console.error("Failed to save access token:", error);
           new Notice("Failed to secure access token");

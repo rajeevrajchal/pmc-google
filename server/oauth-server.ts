@@ -118,7 +118,7 @@ export class OAuthServer {
             // Show success message and manual link after a delay
             setTimeout(() => {
                 document.querySelector('.spinner').style.display = 'none';
-                messageEl.innerHTML = '<span class="success">✅ Authentication successful!</span>';
+                messageEl.innerHTML = '<span class="success">Authentication successful!</span>';
                 manualLinkEl.style.display = 'block';
                 obsidianLinkEl.href = obsidianUrl;
             }, 1000);

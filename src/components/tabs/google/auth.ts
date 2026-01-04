@@ -25,7 +25,7 @@ export class GoogleAuth {
 
     const authUrl = this.buildAuthUrl(clientId);
 
-    new Notice("Opening Google authentication...");
+    new Notice("Opening google authentication");
 
     // Open OAuth URL in browser
     window.open(authUrl, "_blank");
@@ -51,6 +51,6 @@ export class GoogleAuth {
    * Clears the stored access token
    */
   static disconnect(): void {
-    new Notice("Disconnected from Google Calendar");
+    new Notice("Disconnected from google calendar");
   }
 }

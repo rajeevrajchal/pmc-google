@@ -53,7 +53,7 @@ export class PMCPluginSetting extends PluginSettingTab {
 
     const item4 = usageList.createEl("li");
     item4.appendText("Choose ");
-    item4.createEl("strong", { text: "+ Create new event" });
+    item4.createEl("strong", { text: "Create new event" });
     item4.appendText(" to create a new calendar event");
 
     new Setting(containerEl).setName("Setup and configuration").setHeading();

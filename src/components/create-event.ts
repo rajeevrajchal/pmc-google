@@ -64,10 +64,10 @@ export class CreateEventModal extends Modal {
     // Date
     new Setting(contentEl)
       .setName("Date")
-      .setDesc("Event date")
+      .setDesc("Date of the event")
       .addText((text) => {
         text
-          .setPlaceholder("yyyy-mm-dd")
+          .setPlaceholder("YYYY-MM-DD")
           .setValue(this.date)
           .onChange((value) => {
             this.date = value;
@@ -179,7 +179,7 @@ export class CreateEventModal extends Modal {
     // Check if access token exists
     if (!this.plugin.settings.accessToken) {
       new Notice(
-        "Not authenticated. Please connect your Google account in settings.",
+        "Not authenticated, please connect your google account in settings",
       );
       return;
     }
@@ -187,7 +187,7 @@ export class CreateEventModal extends Modal {
     // Check if token has expired
     if (TokenManager.isTokenExpired(this.plugin.settings.tokenExpiryDate)) {
       new Notice(
-        "Access token has expired. Please reconnect your Google account in settings.",
+        "Access token has expired, please reconnect your google account in settings",
       );
       return;
     }
@@ -243,7 +243,7 @@ export class CreateEventModal extends Modal {
         `https://calendar.google.com/calendar/event?eid=${encodeURIComponent(createdEvent.id)}`;
 
       // Success!
-      new Notice(`Event "${this.title}" created successfully!`);
+      new Notice(`Event "${this.title}" created successfully`);
 
       // Call the callback with event data
       this.onSubmit({

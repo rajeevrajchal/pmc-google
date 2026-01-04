@@ -28,7 +28,9 @@ export class GoogleCalendarAPI {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        new Notice(
+          "Google calendar token has expired, please reconnect in settings",
+        );
         throw new Error("Token expired");
       }
 
@@ -86,7 +88,9 @@ export class GoogleCalendarAPI {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        new Notice(
+          "Google calendar token has expired, please reconnect in settings",
+        );
         throw new Error("Token expired");
       }
 
@@ -130,7 +134,9 @@ export class GoogleCalendarAPI {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        new Notice(
+          "Google calendar token has expired, please reconnect in settings",
+        );
         throw new Error("Token expired");
       }
 
@@ -171,7 +177,9 @@ export class GoogleCalendarAPI {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        new Notice(
+          "Google calendar token has expired, please reconnect in settings",
+        );
         throw new Error("Token expired");
       }
 
@@ -198,19 +206,26 @@ export class GoogleCalendarAPI {
    * @param tokenExpiryDate - Optional token expiry date for validation
    * @returns Array of calendar objects
    */
-  static async listCalendars(accessToken: string, tokenExpiryDate?: number): Promise<Array<{
-    id: string;
-    summary: string;
-    description?: string;
-    timeZone?: string;
-    backgroundColor?: string;
-    foregroundColor?: string;
-    primary?: boolean;
-  }>> {
+  static async listCalendars(
+    accessToken: string,
+    tokenExpiryDate?: number,
+  ): Promise<
+    Array<{
+      id: string;
+      summary: string;
+      description?: string;
+      timeZone?: string;
+      backgroundColor?: string;
+      foregroundColor?: string;
+      primary?: boolean;
+    }>
+  > {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        new Notice(
+          "Google calendar token has expired, please reconnect in settings",
+        );
         throw new Error("Token expired");
       }
 
@@ -238,16 +253,21 @@ export class GoogleCalendarAPI {
    * @param accessToken - OAuth access token
    * @param tokenExpiryDate - Optional token expiry date for validation
    */
-  static async syncCalendar(accessToken: string, tokenExpiryDate?: number): Promise<void> {
+  static async syncCalendar(
+    accessToken: string,
+    tokenExpiryDate?: number,
+  ): Promise<void> {
     try {
       // Validate token before making API call
       if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice("⚠️ Google Calendar token has expired. Please reconnect in settings.");
+        new Notice(
+          "Google calendar token has expired, please reconnect in settings",
+        );
         throw new Error("Token expired");
       }
 
       // Access token is already decrypted by SettingsEncryption
-      new Notice("Syncing calendar...");
+      new Notice("Syncing calendar");
 
       // Fetch events for the next 30 days
       const timeMin = new Date().toISOString();
@@ -265,7 +285,6 @@ export class GoogleCalendarAPI {
 
       new Notice(`Synced ${events.length} events`);
 
-      // TODO: Cache events locally for offline access
       return;
     } catch (error) {
       console.error("Error syncing calendar:", error);
