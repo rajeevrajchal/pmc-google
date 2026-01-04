@@ -8,78 +8,11 @@ import { TokenManager } from "./token-manager";
 
 export class GoogleSettingsUI {
   /**
-   * Render setup guide with step-by-step instructions
-   */
-  static renderSetupGuide(containerEl: HTMLElement): void {
-    const setupSection = containerEl.createDiv({ cls: "pmc-setup-guide" });
-    new Setting(setupSection).setName("Setup guide").setHeading();
-
-    const setupSteps = setupSection.createEl("ol");
-
-    // Step 1: Create Google Cloud Project
-    const step1 = setupSteps.createEl("li");
-    step1.createEl("strong", { text: "Create a google cloud project" });
-    const step1List = step1.createEl("ul");
-    const step1Item1 = step1List.createEl("li");
-    step1Item1.appendText("Go to ");
-    step1Item1.createEl("a", {
-      text: "Google cloud console",
-      href: "https://console.cloud.google.com/",
-      attr: { target: "_blank" },
-    });
-    step1List.createEl("li", {
-      text: 'Click "Select a project" → "New project"',
-    });
-    step1List.createEl("li", {
-      text: 'Give it a name (e.g., "Obsidian pmc plugin") and click "Create"',
-    });
-
-    // Step 2: Enable Google Calendar API
-    const step2 = setupSteps.createEl("li");
-    step2.createEl("strong", { text: "Enable google calendar api" });
-    const step2List = step2.createEl("ul");
-    step2List.createEl("li", {
-      text: 'In the sidebar, go to "APIs & services" → "Library"',
-    });
-    step2List.createEl("li", { text: 'Search for "Google calendar api"' });
-    step2List.createEl("li", { text: 'Click on it and press "Enable"' });
-
-    // Step 3: Create OAuth Credentials
-    const step3 = setupSteps.createEl("li");
-    step3.createEl("strong", { text: "Create OAuth 2.0 credentials" });
-    const step3List = step3.createEl("ul");
-    step3List.createEl("li", {
-      text: 'Go to "APIs & Services" → "Credentials"',
-    });
-    step3List.createEl("li", {
-      text: 'Click "Create Credentials" → "OAuth Client ID"',
-    });
-    step3List.createEl("li", {
-      text: "If prompted, configure the OAuth consent screen first",
-    });
-    step3List.createEl("li", {
-      text: 'Select "Web application" as the application type',
-    });
-    step3List
-      .createEl("li", { text: "Add this authorized redirect URI" })
-      .createEl("code", { text: GOOGLE_OAUTH_CALLBACK_URL });
-    step3List.createEl("li", {
-      text: 'Click "Create" and copy your client ID',
-    });
-
-    // Step 4: Configure plugin
-    const step4 = setupSteps.createEl("li");
-    step4.createEl("strong", {
-      text: "Paste the client ID below and click connect",
-    });
-  }
-
-  /**
    * Render OAuth callback URL setting
    */
   static renderCallbackUrlSetting(containerEl: HTMLElement): void {
     new Setting(containerEl)
-      .setName("OAuth callback url")
+      .setName("Oauth callback url")
       .setDesc("Use this url when configuring your google oauth application")
       .addText((text) =>
         text.setValue(GOOGLE_OAUTH_CALLBACK_URL).setDisabled(true),
@@ -87,7 +20,7 @@ export class GoogleSettingsUI {
       .addButton((btn) =>
         btn.setButtonText("Copy").onClick(async () => {
           await navigator.clipboard.writeText(GOOGLE_OAUTH_CALLBACK_URL);
-          new Notice("Callback URL copied to clipboard");
+          new Notice("Callback url copied to clipboard");
         }),
       );
   }
@@ -102,21 +35,16 @@ export class GoogleSettingsUI {
   ): void {
     // Client ID is now automatically decrypted by SettingsEncryption
     // We can use it directly without manual encryption/decryption
-    new Setting(containerEl)
-      .setName("Client ID")
-      .setDesc(
-        "Oauth 2.0 client id from google cloud console (stored encrypted)",
-      )
-      .addText((text) =>
-        text
-          .setPlaceholder("123456789-abcdefg.apps.googleusercontent.com")
-          .setValue(currentClientId)
-          .onChange(async (value) => {
-            const trimmedValue = value.trim();
-            // No need to encrypt - SettingsEncryption handles this automatically
-            await onSave(trimmedValue);
-          }),
-      );
+    new Setting(containerEl).setName("Client ID").addText((text) =>
+      text
+        .setPlaceholder("123456789-abcdefg.apps.googleusercontent.com")
+        .setValue(currentClientId)
+        .onChange(async (value) => {
+          const trimmedValue = value.trim();
+          // No need to encrypt - SettingsEncryption handles this automatically
+          await onSave(trimmedValue);
+        }),
+    );
   }
 
   /**

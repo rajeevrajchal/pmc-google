@@ -58,8 +58,6 @@ export class PMCPluginSetting extends PluginSettingTab {
 
     new Setting(containerEl).setName("Setup and configuration").setHeading();
 
-    // Render setup guide
-    GoogleSettingsUI.renderSetupGuide(containerEl);
     // Render OAuth callback URL
     GoogleSettingsUI.renderCallbackUrlSetting(containerEl);
     // Render Client ID input

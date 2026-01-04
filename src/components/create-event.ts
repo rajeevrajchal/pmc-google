@@ -67,7 +67,7 @@ export class CreateEventModal extends Modal {
       .setDesc("Date of the event")
       .addText((text) => {
         text
-          .setPlaceholder("yyyy-mm-dd")
+          .setPlaceholder("date")
           .setValue(this.date)
           .onChange((value) => {
             this.date = value;
