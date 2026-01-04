@@ -58,7 +58,7 @@
       if (error) {
         console.error("OAuth Error:", error);
         document.querySelector(".message").innerHTML =
-          "<h2>❌ Authentication Failed</h2><p>" +
+          "<h2>Authentication Failed</h2><p>" +
           error +
           "</p><p>You can close this window.</p>";
       } else if (accessToken) {
@@ -75,11 +75,11 @@
         // Show success message
         setTimeout(() => {
           document.querySelector(".message").innerHTML =
-            "<h2>✅ Success!</h2><p>Returning to Obsidian...</p><p>If Obsidian doesn't open, you can close this window.</p>";
+            "<h2>Success!</h2><p>Returning to Obsidian...</p><p>If Obsidian doesn't open, you can close this window.</p>";
         }, 500);
       } else {
         document.querySelector(".message").innerHTML =
-          "<h2>❌ No Token Received</h2><p>No access token found in the response.</p><p>You can close this window.</p>";
+          "<h2>No token received</h2><p>No access token found in the response.</p><p>You can close this window.</p>";
       }
     </script>
   </body>

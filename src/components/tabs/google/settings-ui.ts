@@ -18,7 +18,7 @@ export class GoogleSettingsUI {
 
     // Step 1: Create Google Cloud Project
     const step1 = setupSteps.createEl("li");
-    step1.createEl("strong", { text: "Create a Google cloud project:" });
+    step1.createEl("strong", { text: "Create a google cloud project:" });
     const step1List = step1.createEl("ul");
     const step1Item1 = step1List.createEl("li");
     step1Item1.appendText("Go to ");
@@ -36,7 +36,7 @@ export class GoogleSettingsUI {
 
     // Step 2: Enable Google Calendar API
     const step2 = setupSteps.createEl("li");
-    step2.createEl("strong", { text: "Enable Google Calendar API:" });
+    step2.createEl("strong", { text: "Enable google calendar API:" });
     const step2List = step2.createEl("ul");
     step2List.createEl("li", {
       text: 'In the sidebar, go to "APIs & services" → "Library"',
@@ -80,7 +80,7 @@ export class GoogleSettingsUI {
   static renderCallbackUrlSetting(containerEl: HTMLElement): void {
     new Setting(containerEl)
       .setName("OAuth callback URL")
-      .setDesc("Use this URL when configuring your Google OAuth application")
+      .setDesc("Use this URL when configuring your google oauth application")
       .addText((text) =>
         text.setValue(GOOGLE_OAUTH_CALLBACK_URL).setDisabled(true),
       )
@@ -103,8 +103,10 @@ export class GoogleSettingsUI {
     // Client ID is now automatically decrypted by SettingsEncryption
     // We can use it directly without manual encryption/decryption
     new Setting(containerEl)
-      .setName("Client ID")
-      .setDesc("OAuth 2.0 client ID from Google Cloud Console (stored encrypted)")
+      .setName("Client id")
+      .setDesc(
+        "OAuth 2.0 client id from google cloud console (stored encrypted)",
+      )
       .addText((text) =>
         text
           .setPlaceholder("123456789-abcdefg.apps.googleusercontent.com")
@@ -156,13 +158,13 @@ export class GoogleSettingsUI {
 
     if (!expiryDate) {
       // Unlimited token
-      statusText = "✅ Token valid: unlimited";
+      statusText = "Token valid: unlimited";
     } else if (isExpired) {
-      statusText = "⚠️ Token expired";
+      statusText = "Token expired";
     } else if (needsRefresh) {
-      statusText = `⚠️ Token expires in ${timeRemaining}`;
+      statusText = `Token expires in ${timeRemaining}`;
     } else {
-      statusText = `✅ Token valid for ${timeRemaining}`;
+      statusText = `Token valid for ${timeRemaining}`;
     }
 
     new Setting(containerEl).setName("Token status").setDesc(statusText);
@@ -181,7 +183,7 @@ export class GoogleSettingsUI {
   ): void {
     const accountSetting = new Setting(containerEl)
       .setName("Account")
-      .setDesc(isConnected ? "✅ Connected" : "❌ Not connected");
+      .setDesc(isConnected ? "Connected" : "Not connected");
 
     if (isConnected) {
       // Sync Calendar button
@@ -209,7 +211,7 @@ export class GoogleSettingsUI {
         accountSetting.addButton((btn) =>
           btn
             .setCta()
-            .setButtonText("Connect to Google")
+            .setButtonText("Connect to google")
             .onClick(() => {
               onConnect(clientId);
             }),

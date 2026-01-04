@@ -54,7 +54,7 @@ export class CreateEventModal extends Modal {
       .setDesc("Name of the event")
       .addText((text) =>
         text
-          .setPlaceholder("Team Meeting")
+          .setPlaceholder("Team meeting")
           .setValue(this.title)
           .onChange((value) => {
             this.title = value;
@@ -67,7 +67,7 @@ export class CreateEventModal extends Modal {
       .setDesc("Event date")
       .addText((text) => {
         text
-          .setPlaceholder("YYYY-MM-DD")
+          .setPlaceholder("yyyy-mm-dd")
           .setValue(this.date)
           .onChange((value) => {
             this.date = value;
@@ -162,24 +162,24 @@ export class CreateEventModal extends Modal {
   async createEvent() {
     // Validate inputs
     if (!this.title.trim()) {
-      new Notice("❌ Event title is required");
+      new Notice("Event title is required");
       return;
     }
 
     if (!this.date) {
-      new Notice("❌ Event date is required");
+      new Notice("Event date is required");
       return;
     }
 
     if (!this.isAllDay && (!this.startTime || !this.endTime)) {
-      new Notice("❌ Start and end times are required");
+      new Notice("Start and end times are required");
       return;
     }
 
     // Check if access token exists
     if (!this.plugin.settings.accessToken) {
       new Notice(
-        "❌ Not authenticated. Please connect your Google account in settings.",
+        "Not authenticated. Please connect your Google account in settings.",
       );
       return;
     }
@@ -187,7 +187,7 @@ export class CreateEventModal extends Modal {
     // Check if token has expired
     if (TokenManager.isTokenExpired(this.plugin.settings.tokenExpiryDate)) {
       new Notice(
-        "❌ Access token has expired. Please reconnect your Google account in settings.",
+        "Access token has expired. Please reconnect your Google account in settings.",
       );
       return;
     }
@@ -243,7 +243,7 @@ export class CreateEventModal extends Modal {
         `https://calendar.google.com/calendar/event?eid=${encodeURIComponent(createdEvent.id)}`;
 
       // Success!
-      new Notice(`✅ Event "${this.title}" created successfully!`);
+      new Notice(`Event "${this.title}" created successfully!`);
 
       // Call the callback with event data
       this.onSubmit({
@@ -255,7 +255,7 @@ export class CreateEventModal extends Modal {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      new Notice(`❌ Failed to create event: ${errorMessage}`);
+      new Notice(`Failed to create event: ${errorMessage}`);
     }
   }
 

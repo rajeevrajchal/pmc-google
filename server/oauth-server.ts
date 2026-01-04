@@ -104,7 +104,7 @@ export class OAuthServer {
         
         if (error) {
             document.querySelector('.spinner').style.display = 'none';
-            messageEl.innerHTML = '<span class="error">❌ Authentication failed: ' + error + '</span>';
+            messageEl.innerHTML = '<span class="error">Authentication failed: ' + error + '</span>';
             console.error('OAuth Error:', error);
         } else if (accessToken) {
             // Build the obsidian:// protocol URL
@@ -124,7 +124,7 @@ export class OAuthServer {
             }, 1000);
         } else {
             document.querySelector('.spinner').style.display = 'none';
-            messageEl.innerHTML = '<span class="error">❌ No access token received</span>';
+            messageEl.innerHTML = '<span class="error">No access token received</span>';
             console.error('No token found in URL');
         }
     </script>

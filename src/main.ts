@@ -41,11 +41,11 @@ export default class PMCPlugin extends Plugin {
           new Notice("✅ Google Calendar Connected!");
         } catch (error) {
           console.error("Failed to save access token:", error);
-          new Notice("❌ Failed to secure access token");
+          new Notice("Failed to secure access token");
         }
       } else {
         new Notice(
-          `❌ Connection failed: ${data.error || "No token found in response"}`,
+          `Connection failed: ${data.error || "No token found in response"}`,
         );
       }
     });

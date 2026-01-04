@@ -133,7 +133,7 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
     context: EditorSuggestContext,
   ): Promise<EventSuggestion[]> {
     if (this.plugin.settings.accessToken === "") {
-      new Notice("Please connect to Google Calendar first");
+      new Notice("Please connect to google calendar first");
       return [];
     }
 
@@ -151,14 +151,14 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
       suggestions.push(
         ...filteredEvents.map((event) => ({
           event,
-          summary: event.summary || event.description || "Untitled Event",
+          summary: event.summary || event.description || "Untitled event",
         })),
       );
 
       return [
         {
           isCreate: true,
-          summary: `+ Create new event`,
+          summary: `Create new event`,
         },
         ...suggestions,
       ];
@@ -251,7 +251,7 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         // Add conference indicator if available
         if (event.hangoutLink || event.conferenceData) {
           rightDiv.createEl("div", {
-            text: "🎥 Video",
+            text: "Video",
             cls: "gcal-event-conference",
           });
         }
@@ -283,19 +283,14 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
       const end = { ...this.context.end };
       const query = this.context.query;
 
-      new CreateEventModal(
-        this.app,
-        this.plugin,
-        query,
-        (eventData) => {
-          // Insert the created event as a link using captured context
-          const formattedText = `[${eventData.title}](${eventData.link})`;
-          editor.replaceRange(formattedText, start, end);
-          
-          // Clear cache to fetch the newly created event next time
-          this.clearCache();
-        },
-      ).open();
+      new CreateEventModal(this.app, this.plugin, query, (eventData) => {
+        // Insert the created event as a link using captured context
+        const formattedText = `[${eventData.title}](${eventData.link})`;
+        editor.replaceRange(formattedText, start, end);
+
+        // Clear cache to fetch the newly created event next time
+        this.clearCache();
+      }).open();
     } else if (item.event) {
       const event = item.event;
       const eventLink =
