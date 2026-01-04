@@ -12,10 +12,15 @@ export default tseslint.config(
       parser: tseslint.parser,
       parserOptions: {
         projectService: {
-          allowDefaultProject: ["eslint.config.js", "manifest.json", "server/*.ts"],
+          allowDefaultProject: [
+            "eslint.config.js",
+            "manifest.json",
+            "server/*.ts",
+          ],
         },
         tsconfigRootDir: import.meta.dirname,
         extraFileExtensions: [".json"],
+        warnOnUnsupportedTypeScriptVersion: false, // Move it here
       },
     },
     plugins: {
