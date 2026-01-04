@@ -61,12 +61,18 @@ export default class PMCPlugin extends Plugin {
     const loadedData = (await this.loadData()) as Partial<PMCPluginSettingType>;
     const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
 
+    // Get vault identifier (use vault name as unique identifier)
+    const vaultId = this.app.vault.getName();
+
     // Decrypt sensitive fields after loading
-    this.settings = await SettingsEncryption.decryptSettings(mergedSettings);
+    this.settings = await SettingsEncryption.decryptSettings(
+      mergedSettings,
+      vaultId,
+    );
 
     // Migrate existing unencrypted settings to encrypted format
     const { settings: migratedSettings, migrated } =
-      await SettingsEncryption.migrateToEncrypted(this.settings);
+      await SettingsEncryption.migrateToEncrypted(this.settings, vaultId);
 
     if (migrated) {
       this.settings = migratedSettings;
@@ -75,9 +81,13 @@ export default class PMCPlugin extends Plugin {
   }
 
   async saveSettings() {
+    // Get vault identifier (use vault name as unique identifier)
+    const vaultId = this.app.vault.getName();
+
     // Encrypt sensitive fields before saving
     const encryptedSettings = await SettingsEncryption.encryptSettings(
       this.settings,
+      vaultId,
     );
     await this.saveData(encryptedSettings);
   }

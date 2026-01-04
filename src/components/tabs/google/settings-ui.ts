@@ -12,15 +12,15 @@ export class GoogleSettingsUI {
    */
   static renderCallbackUrlSetting(containerEl: HTMLElement): void {
     new Setting(containerEl)
-      .setName("Oauth callback url")
-      .setDesc("Use this url when configuring your google oauth application")
+      .setName("Callback URL")
+      .setDesc("Use this URL when configuring your Google OAuth application.")
       .addText((text) =>
         text.setValue(GOOGLE_OAUTH_CALLBACK_URL).setDisabled(true),
       )
       .addButton((btn) =>
         btn.setButtonText("Copy").onClick(async () => {
           await navigator.clipboard.writeText(GOOGLE_OAUTH_CALLBACK_URL);
-          new Notice("Callback url copied to clipboard");
+          new Notice("Callback URL copied to clipboard.");
         }),
       );
   }

@@ -28,10 +28,12 @@ export class SettingsEncryption {
   /**
    * Encrypt sensitive fields in settings before saving
    * @param settings - The settings object to encrypt
+   * @param vaultId - Unique identifier for the vault (typically the vault name)
    * @returns Settings object with encrypted sensitive fields
    */
   static async encryptSettings(
     settings: PMCPluginSettingType,
+    vaultId: string,
   ): Promise<PMCPluginSettingType> {
     const encrypted = { ...settings };
 
@@ -42,7 +44,7 @@ export class SettingsEncryption {
       if (value && typeof value === "string" && value.length > 0) {
         if (!this.isEncrypted(value)) {
           try {
-            const encryptedValue = await CryptoUtil.encrypt(value);
+            const encryptedValue = await CryptoUtil.encrypt(value, vaultId);
             encrypted[field] = this.ENCRYPTION_PREFIX + encryptedValue;
           } catch (error) {
             console.error(`Failed to encrypt field ${String(field)}:`, error);
@@ -58,10 +60,12 @@ export class SettingsEncryption {
   /**
    * Decrypt sensitive fields in settings after loading
    * @param settings - The settings object to decrypt
+   * @param vaultId - Unique identifier for the vault (must match the one used for encryption)
    * @returns Settings object with decrypted sensitive fields
    */
   static async decryptSettings(
     settings: PMCPluginSettingType,
+    vaultId: string,
   ): Promise<PMCPluginSettingType> {
     const decrypted = { ...settings };
 
@@ -72,7 +76,7 @@ export class SettingsEncryption {
       if (value && typeof value === "string" && this.isEncrypted(value)) {
         try {
           const encryptedValue = value.substring(this.ENCRYPTION_PREFIX.length);
-          const decryptedValue = await CryptoUtil.decrypt(encryptedValue);
+          const decryptedValue = await CryptoUtil.decrypt(encryptedValue, vaultId);
           decrypted[field] = decryptedValue;
         } catch (error) {
           console.error(`Failed to decrypt field ${String(field)}:`, error);
@@ -98,10 +102,12 @@ export class SettingsEncryption {
    * Migrate existing unencrypted settings to encrypted format
    * This should be called once during plugin initialization
    * @param settings - The settings object that may have unencrypted values
+   * @param vaultId - Unique identifier for the vault (typically the vault name)
    * @returns Migrated settings with encrypted sensitive fields
    */
   static async migrateToEncrypted(
     settings: PMCPluginSettingType,
+    vaultId: string,
   ): Promise<{ settings: PMCPluginSettingType; migrated: boolean }> {
     let migrated = false;
 
@@ -121,7 +127,7 @@ export class SettingsEncryption {
     }
 
     if (migrated) {
-      const encryptedSettings = await this.encryptSettings(settings);
+      const encryptedSettings = await this.encryptSettings(settings, vaultId);
       return { settings: encryptedSettings, migrated: true };
     }
 

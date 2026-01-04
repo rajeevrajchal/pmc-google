@@ -48,10 +48,8 @@ export class CryptoUtil {
    * Generate a vault-specific passphrase
    * This creates a unique passphrase for each Obsidian vault
    */
-  private static getVaultPassphrase(): string {
+  private static getVaultPassphrase(vaultId: string): string {
     // Use a combination of vault identifier and a static secret
-    // In production, you might want to use app.vault.adapter.basePath or similar
-    const vaultId = window.location.pathname || "obsidian-vault";
     const staticSecret = "pmc-plugin-secret-v1"; // Static component
     return `${vaultId}-${staticSecret}`;
   }
@@ -59,9 +57,10 @@ export class CryptoUtil {
   /**
    * Encrypt a string value
    * @param plaintext - The plain text to encrypt
+   * @param vaultId - Unique identifier for the vault (typically the vault name or path)
    * @returns Base64 encoded encrypted string with salt and IV prepended
    */
-  static async encrypt(plaintext: string): Promise<string> {
+  static async encrypt(plaintext: string, vaultId: string): Promise<string> {
     if (!plaintext) {
       return "";
     }
@@ -72,7 +71,7 @@ export class CryptoUtil {
       const iv = crypto.getRandomValues(new Uint8Array(this.IV_LENGTH));
 
       // Derive encryption key
-      const passphrase = this.getVaultPassphrase();
+      const passphrase = this.getVaultPassphrase(vaultId);
       const key = await this.deriveKey(passphrase, salt);
 
       // Encrypt the plaintext
@@ -107,9 +106,10 @@ export class CryptoUtil {
   /**
    * Decrypt an encrypted string
    * @param encryptedText - Base64 encoded encrypted string with salt and IV
+   * @param vaultId - Unique identifier for the vault (must match the one used for encryption)
    * @returns Decrypted plain text
    */
-  static async decrypt(encryptedText: string): Promise<string> {
+  static async decrypt(encryptedText: string, vaultId: string): Promise<string> {
     if (!encryptedText) {
       return "";
     }
@@ -127,7 +127,7 @@ export class CryptoUtil {
       const encryptedData = combined.slice(this.SALT_LENGTH + this.IV_LENGTH);
 
       // Derive decryption key
-      const passphrase = this.getVaultPassphrase();
+      const passphrase = this.getVaultPassphrase(vaultId);
       const key = await this.deriveKey(passphrase, salt);
 
       // Decrypt the data
