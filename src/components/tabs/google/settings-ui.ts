@@ -18,35 +18,35 @@ export class GoogleSettingsUI {
 
     // Step 1: Create Google Cloud Project
     const step1 = setupSteps.createEl("li");
-    step1.createEl("strong", { text: "Create a google cloud project:" });
+    step1.createEl("strong", { text: "Create a google cloud project" });
     const step1List = step1.createEl("ul");
     const step1Item1 = step1List.createEl("li");
     step1Item1.appendText("Go to ");
     step1Item1.createEl("a", {
-      text: "Google Cloud Console",
+      text: "Google cloud console",
       href: "https://console.cloud.google.com/",
       attr: { target: "_blank" },
     });
     step1List.createEl("li", {
-      text: 'Click "select a project" → "new project"',
+      text: 'Click "Select a project" → "New project"',
     });
     step1List.createEl("li", {
-      text: 'Give it a name (e.g., "Obsidian PMC Plugin") and click "Create"',
+      text: 'Give it a name (e.g., "Obsidian pmc plugin") and click "Create"',
     });
 
     // Step 2: Enable Google Calendar API
     const step2 = setupSteps.createEl("li");
-    step2.createEl("strong", { text: "Enable google calendar API:" });
+    step2.createEl("strong", { text: "Enable google calendar api" });
     const step2List = step2.createEl("ul");
     step2List.createEl("li", {
-      text: 'In the sidebar, go to "APIs & Services" → "Library"',
+      text: 'In the sidebar, go to "APIs & services" → "Library"',
     });
-    step2List.createEl("li", { text: 'Search for "Google Calendar API"' });
+    step2List.createEl("li", { text: 'Search for "Google calendar api"' });
     step2List.createEl("li", { text: 'Click on it and press "Enable"' });
 
     // Step 3: Create OAuth Credentials
     const step3 = setupSteps.createEl("li");
-    step3.createEl("strong", { text: "Create OAuth 2.0 credentials:" });
+    step3.createEl("strong", { text: "Create OAuth 2.0 credentials" });
     const step3List = step3.createEl("ul");
     step3List.createEl("li", {
       text: 'Go to "APIs & Services" → "Credentials"',
@@ -58,13 +58,13 @@ export class GoogleSettingsUI {
       text: "If prompted, configure the OAuth consent screen first",
     });
     step3List.createEl("li", {
-      text: 'Select "web application" as the application type',
+      text: 'Select "Web application" as the application type',
     });
     step3List
-      .createEl("li", { text: "Add this authorized redirect URI:" })
+      .createEl("li", { text: "Add this authorized redirect URI" })
       .createEl("code", { text: GOOGLE_OAUTH_CALLBACK_URL });
     step3List.createEl("li", {
-      text: 'Click "create" and copy your client ID',
+      text: 'Click "Create" and copy your client ID',
     });
 
     // Step 4: Configure plugin
@@ -79,8 +79,8 @@ export class GoogleSettingsUI {
    */
   static renderCallbackUrlSetting(containerEl: HTMLElement): void {
     new Setting(containerEl)
-      .setName("OAuth callback URL")
-      .setDesc("Use this URL when configuring your Google OAuth application")
+      .setName("OAuth callback url")
+      .setDesc("Use this url when configuring your google oauth application")
       .addText((text) =>
         text.setValue(GOOGLE_OAUTH_CALLBACK_URL).setDisabled(true),
       )
@@ -105,7 +105,7 @@ export class GoogleSettingsUI {
     new Setting(containerEl)
       .setName("Client ID")
       .setDesc(
-        "OAuth 2.0 client ID from Google Cloud Console (stored encrypted)",
+        "Oauth 2.0 client id from google cloud console (stored encrypted)",
       )
       .addText((text) =>
         text
