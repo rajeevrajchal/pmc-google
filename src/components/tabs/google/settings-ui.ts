@@ -12,8 +12,7 @@ export class GoogleSettingsUI {
    */
   static renderCallbackUrlSetting(containerEl: HTMLElement): void {
     new Setting(containerEl)
-      .setName("Callback url")
-      .setDesc("Use this url when configuring your google oauth application.")
+      .setName("Callback URL")
       .addText((text) =>
         text.setValue(GOOGLE_OAUTH_CALLBACK_URL).setDisabled(true),
       )
