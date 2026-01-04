@@ -7,7 +7,6 @@ import { Notice, Plugin } from "obsidian";
 import { EditorEventSuggestion } from "components/event-suggestion";
 import { TokenManager } from "components/tabs/google/token-manager";
 import { TokenExpiryOption } from "components/tabs/google/types";
-import { CryptoUtil } from "components/tabs/google/crypto-util";
 import { SettingsEncryption } from "components/settings-encryption";
 
 export default class PMCPlugin extends Plugin {
@@ -60,29 +59,26 @@ export default class PMCPlugin extends Plugin {
 
   async loadSettings() {
     const loadedData = (await this.loadData()) as Partial<PMCPluginSettingType>;
-    const mergedSettings = Object.assign(
-      {},
-      DEFAULT_SETTINGS,
-      loadedData,
-    );
+    const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
 
     // Decrypt sensitive fields after loading
     this.settings = await SettingsEncryption.decryptSettings(mergedSettings);
 
     // Migrate existing unencrypted settings to encrypted format
-    const { settings: migratedSettings, migrated } = 
+    const { settings: migratedSettings, migrated } =
       await SettingsEncryption.migrateToEncrypted(this.settings);
-    
+
     if (migrated) {
       this.settings = migratedSettings;
       await this.saveSettings();
-      new Notice("Settings have been encrypted for enhanced security");
     }
   }
 
   async saveSettings() {
     // Encrypt sensitive fields before saving
-    const encryptedSettings = await SettingsEncryption.encryptSettings(this.settings);
+    const encryptedSettings = await SettingsEncryption.encryptSettings(
+      this.settings,
+    );
     await this.saveData(encryptedSettings);
   }
 }

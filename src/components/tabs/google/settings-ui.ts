@@ -18,7 +18,7 @@ export class GoogleSettingsUI {
 
     // Step 1: Create Google Cloud Project
     const step1 = setupSteps.createEl("li");
-    step1.createEl("strong", { text: "Create a google cloud project:" });
+    step1.createEl("strong", { text: "Create a Google cloud project:" });
     const step1List = step1.createEl("ul");
     const step1Item1 = step1List.createEl("li");
     step1Item1.appendText("Go to ");
@@ -70,7 +70,7 @@ export class GoogleSettingsUI {
     // Step 4: Configure plugin
     const step4 = setupSteps.createEl("li");
     step4.createEl("strong", {
-      text: "Paste the client ID below and click Connect",
+      text: "Paste the client ID below and click connect",
     });
   }
 
@@ -95,11 +95,11 @@ export class GoogleSettingsUI {
   /**
    * Render Client ID input setting
    */
-  static async renderClientIdSetting(
+  static renderClientIdSetting(
     containerEl: HTMLElement,
     currentClientId: string,
     onSave: (clientId: string) => Promise<void>,
-  ): Promise<void> {
+  ): void {
     // Client ID is now automatically decrypted by SettingsEncryption
     // We can use it directly without manual encryption/decryption
     new Setting(containerEl)
@@ -126,7 +126,7 @@ export class GoogleSettingsUI {
     onSave: (expiry: TokenExpiryOption) => Promise<void>,
   ): void {
     new Setting(containerEl)
-      .setName("Token Expiry")
+      .setName("Token expiry")
       .setDesc(
         "How long before the access token expires and requires re-authentication",
       )
@@ -156,7 +156,7 @@ export class GoogleSettingsUI {
 
     if (!expiryDate) {
       // Unlimited token
-      statusText = "✅ Token valid: Unlimited";
+      statusText = "✅ Token valid: unlimited";
     } else if (isExpired) {
       statusText = "⚠️ Token expired";
     } else if (needsRefresh) {
@@ -181,7 +181,7 @@ export class GoogleSettingsUI {
   ): void {
     const accountSetting = new Setting(containerEl)
       .setName("Account")
-      .setDesc(isConnected ? "✅ Connected" : "❌ Not Connected");
+      .setDesc(isConnected ? "✅ Connected" : "❌ Not connected");
 
     if (isConnected) {
       // Sync Calendar button

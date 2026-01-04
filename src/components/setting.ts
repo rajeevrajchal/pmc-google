@@ -56,13 +56,13 @@ export class PMCPluginSetting extends PluginSettingTab {
     item4.createEl("strong", { text: "+ Create new event" });
     item4.appendText(" to create a new calendar event");
 
-    new Setting(containerEl).setName("Setup & configuration").setHeading();
+    new Setting(containerEl).setName("Setup and configuration").setHeading();
 
     // Render setup guide
     GoogleSettingsUI.renderSetupGuide(containerEl);
     // Render OAuth callback URL
     GoogleSettingsUI.renderCallbackUrlSetting(containerEl);
-    // Render Client ID input (async)
+    // Render Client ID input
     GoogleSettingsUI.renderClientIdSetting(
       containerEl,
       this.plugin.settings.clientId,
@@ -71,9 +71,7 @@ export class PMCPluginSetting extends PluginSettingTab {
         await this.plugin.saveSettings();
         this.display();
       },
-    ).catch((error) => {
-      console.error("Failed to render client ID setting:", error);
-    });
+    );
 
     // Render Token Expiry setting
     GoogleSettingsUI.renderTokenExpirySetting(

@@ -37,7 +37,7 @@ export class SettingsEncryption {
 
     for (const field of this.ENCRYPTED_FIELDS) {
       const value = encrypted[field];
-      
+
       // Only encrypt if value exists and is not already encrypted
       if (value && typeof value === "string" && value.length > 0) {
         if (!this.isEncrypted(value)) {
@@ -121,7 +121,6 @@ export class SettingsEncryption {
     }
 
     if (migrated) {
-      console.log("Migrating settings to encrypted format...");
       const encryptedSettings = await this.encryptSettings(settings);
       return { settings: encryptedSettings, migrated: true };
     }

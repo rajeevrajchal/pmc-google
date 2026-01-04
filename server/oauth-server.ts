@@ -112,8 +112,6 @@ export class OAuthServer {
                 'access_token=' + encodeURIComponent(accessToken) +
                 (expiresIn ? '&expires_in=' + encodeURIComponent(expiresIn) : '');
             
-            console.log('Redirecting to Obsidian:', obsidianUrl);
-            
             // Try to open Obsidian automatically
             window.location.href = obsidianUrl;
             

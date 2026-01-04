@@ -48,7 +48,7 @@ export class DonationModal extends Modal {
     //
     // Thank you message
     contentEl.createEl("p", {
-      text: "Thank you for your support! Every contribution helps improve this plugin. 🙏",
+      text: "Thank you for your support! Every contribution helps improve this plugin.",
       cls: "donation-thanks",
     });
 

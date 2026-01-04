@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Setting, setIcon } from "obsidian";
+import { App, Modal, Notice, Setting } from "obsidian";
 import PickMeetingCalendar from "../main";
 import { GoogleCalendarAPI, TokenManager } from "./tabs/google";
 
@@ -46,9 +46,7 @@ export class CreateEventModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    new Setting(contentEl)
-      .setName("Create calendar event")
-      .setHeading();
+    new Setting(contentEl).setName("Create calendar event").setHeading();
 
     // Title
     new Setting(contentEl)
