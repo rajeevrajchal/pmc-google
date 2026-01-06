@@ -79,7 +79,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         );
         this.lastFetchTime = now;
       } catch (error) {
-        console.error("Error fetching events:", error);
         return [];
       }
     }
@@ -163,7 +162,6 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         ...suggestions,
       ];
     } catch (error) {
-      console.error("Error getting suggestions:", error);
       return [];
     }
   }

@@ -74,15 +74,12 @@ export class SettingsEncryption {
 
       // Only decrypt if value exists and is encrypted
       if (value && typeof value === "string" && this.isEncrypted(value)) {
-        try {
-          const encryptedValue = value.substring(this.ENCRYPTION_PREFIX.length);
-          const decryptedValue = await CryptoUtil.decrypt(encryptedValue, vaultId);
-          decrypted[field] = decryptedValue;
-        } catch (error) {
-          console.error(`Failed to decrypt field ${String(field)}:`, error);
-          // Clear the field if decryption fails (corrupted data)
-          decrypted[field] = "";
-        }
+        const encryptedValue = value.substring(this.ENCRYPTION_PREFIX.length);
+        const decryptedValue = await CryptoUtil.decrypt(
+          encryptedValue,
+          vaultId,
+        );
+        decrypted[field] = decryptedValue;
       }
     }
 

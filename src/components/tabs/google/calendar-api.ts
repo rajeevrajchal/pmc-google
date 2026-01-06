@@ -6,6 +6,34 @@ export class GoogleCalendarAPI {
   private static readonly BASE_URL = "https://www.googleapis.com/calendar/v3";
 
   /**
+   * Validate access token before making API calls
+   * @param accessToken - The access token to validate
+   * @param tokenExpiryDate - Optional token expiry date
+   * @throws Error if token is invalid, missing, or encrypted
+   */
+  private static validateToken(accessToken: string, tokenExpiryDate?: number): void {
+    // Validate token exists and is not empty
+    if (!accessToken || accessToken.trim() === "") {
+      console.error("[PMC] Access token is empty or missing");
+      new Notice("Please connect to Google Calendar in settings");
+      throw new Error("Access token missing");
+    }
+
+    // Check if token appears to be encrypted (should not be at this point)
+    if (accessToken.startsWith("enc:")) {
+      console.error("[PMC] CRITICAL: Access token is still encrypted! Decryption failed.");
+      new Notice("Token decryption failed. Please reconnect to Google Calendar.");
+      throw new Error("Token not decrypted");
+    }
+
+    // Validate token expiry
+    if (TokenManager.isTokenExpired(tokenExpiryDate)) {
+      new Notice("Google calendar token has expired, please reconnect in settings");
+      throw new Error("Token expired");
+    }
+  }
+
+  /**
    * Fetch calendar events from Google Calendar
    * @param accessToken - OAuth access token
    * @param calendarId - Calendar ID (defaults to 'primary')
@@ -27,14 +55,8 @@ export class GoogleCalendarAPI {
   ): Promise<CalendarEvent[]> {
     try {
       // Validate token before making API call
-      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice(
-          "Google calendar token has expired, please reconnect in settings",
-        );
-        throw new Error("Token expired");
-      }
+      this.validateToken(accessToken, tokenExpiryDate);
 
-      // Access token is already decrypted by SettingsEncryption
       const params: Record<string, string> = {
         singleEvents: "true",
         orderBy: "startTime",
@@ -87,14 +109,7 @@ export class GoogleCalendarAPI {
   ): Promise<CalendarEvent> {
     try {
       // Validate token before making API call
-      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice(
-          "Google calendar token has expired, please reconnect in settings",
-        );
-        throw new Error("Token expired");
-      }
-
-      // Access token is already decrypted by SettingsEncryption
+      this.validateToken(accessToken, tokenExpiryDate);
       const response = await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events`,
         method: "POST",
@@ -133,14 +148,7 @@ export class GoogleCalendarAPI {
   ): Promise<CalendarEvent> {
     try {
       // Validate token before making API call
-      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice(
-          "Google calendar token has expired, please reconnect in settings",
-        );
-        throw new Error("Token expired");
-      }
-
-      // Access token is already decrypted by SettingsEncryption
+      this.validateToken(accessToken, tokenExpiryDate);
       const response = await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         method: "PUT",
@@ -176,14 +184,7 @@ export class GoogleCalendarAPI {
   ): Promise<void> {
     try {
       // Validate token before making API call
-      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice(
-          "Google calendar token has expired, please reconnect in settings",
-        );
-        throw new Error("Token expired");
-      }
-
-      // Access token is already decrypted by SettingsEncryption
+      this.validateToken(accessToken, tokenExpiryDate);
       await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         method: "DELETE",
@@ -222,14 +223,7 @@ export class GoogleCalendarAPI {
   > {
     try {
       // Validate token before making API call
-      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice(
-          "Google calendar token has expired, please reconnect in settings",
-        );
-        throw new Error("Token expired");
-      }
-
-      // Access token is already decrypted by SettingsEncryption
+      this.validateToken(accessToken, tokenExpiryDate);
       const response = await requestUrl({
         url: `${this.BASE_URL}/users/me/calendarList`,
         method: "GET",
@@ -259,14 +253,8 @@ export class GoogleCalendarAPI {
   ): Promise<void> {
     try {
       // Validate token before making API call
-      if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-        new Notice(
-          "Google calendar token has expired, please reconnect in settings",
-        );
-        throw new Error("Token expired");
-      }
+      this.validateToken(accessToken, tokenExpiryDate);
 
-      // Access token is already decrypted by SettingsEncryption
       new Notice("Syncing calendar");
 
       // Fetch events for the next 30 days

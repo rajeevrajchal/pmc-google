@@ -23,6 +23,14 @@ export class GoogleAuth {
       return;
     }
 
+    // Check if client ID appears to be encrypted (should not be at this point)
+    if (clientId.startsWith("enc:")) {
+      new Notice(
+        "Client ID decryption failed. Please re-enter your Client ID in settings.",
+      );
+      return;
+    }
+
     const authUrl = this.buildAuthUrl(clientId);
 
     new Notice("Opening google authentication");

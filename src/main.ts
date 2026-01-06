@@ -7,7 +7,6 @@ import { Notice, Plugin } from "obsidian";
 import { EditorEventSuggestion } from "components/event-suggestion";
 import { TokenManager } from "components/tabs/google/token-manager";
 import { TokenExpiryOption } from "components/tabs/google/types";
-import { SettingsEncryption } from "components/settings-encryption";
 
 export default class PMCPlugin extends Plugin {
   settings: PMCPluginSettingType;
@@ -58,37 +57,10 @@ export default class PMCPlugin extends Plugin {
   onunload() {}
 
   async loadSettings() {
-    const loadedData = (await this.loadData()) as Partial<PMCPluginSettingType>;
-    const mergedSettings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
-
-    // Get vault identifier (use vault name as unique identifier)
-    const vaultId = this.app.vault.getName();
-
-    // Decrypt sensitive fields after loading
-    this.settings = await SettingsEncryption.decryptSettings(
-      mergedSettings,
-      vaultId,
-    );
-
-    // Migrate existing unencrypted settings to encrypted format
-    const { settings: migratedSettings, migrated } =
-      await SettingsEncryption.migrateToEncrypted(this.settings, vaultId);
-
-    if (migrated) {
-      this.settings = migratedSettings;
-      await this.saveSettings();
-    }
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
   async saveSettings() {
-    // Get vault identifier (use vault name as unique identifier)
-    const vaultId = this.app.vault.getName();
-
-    // Encrypt sensitive fields before saving
-    const encryptedSettings = await SettingsEncryption.encryptSettings(
-      this.settings,
-      vaultId,
-    );
-    await this.saveData(encryptedSettings);
+    await this.saveData(this.settings);
   }
 }
