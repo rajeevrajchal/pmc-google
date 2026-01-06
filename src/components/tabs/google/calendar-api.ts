@@ -11,24 +11,29 @@ export class GoogleCalendarAPI {
    * @param tokenExpiryDate - Optional token expiry date
    * @throws Error if token is invalid, missing, or encrypted
    */
-  private static validateToken(accessToken: string, tokenExpiryDate?: number): void {
+  private static validateToken(
+    accessToken: string,
+    tokenExpiryDate?: number,
+  ): void {
     // Validate token exists and is not empty
     if (!accessToken || accessToken.trim() === "") {
-      console.error("[PMC] Access token is empty or missing");
-      new Notice("Please connect to Google Calendar in settings");
+      new Notice("Please connect to google calendar in settings");
       throw new Error("Access token missing");
     }
 
     // Check if token appears to be encrypted (should not be at this point)
     if (accessToken.startsWith("enc:")) {
-      console.error("[PMC] CRITICAL: Access token is still encrypted! Decryption failed.");
-      new Notice("Token decryption failed. Please reconnect to Google Calendar.");
+      new Notice(
+        "Token decryption failed. Please reconnect to google calendar.",
+      );
       throw new Error("Token not decrypted");
     }
 
     // Validate token expiry
     if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-      new Notice("Google calendar token has expired, please reconnect in settings");
+      new Notice(
+        "Google calendar token has expired, please reconnect in settings",
+      );
       throw new Error("Token expired");
     }
   }

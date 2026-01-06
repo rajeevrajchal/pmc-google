@@ -79,6 +79,9 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         );
         this.lastFetchTime = now;
       } catch (error) {
+        new Notice(
+          error instanceof Error ? error.message : "Failed to fetch events",
+        );
         return [];
       }
     }
@@ -162,6 +165,9 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         ...suggestions,
       ];
     } catch (error) {
+      new Notice(
+        error instanceof Error ? error.message : "Failed to create events",
+      );
       return [];
     }
   }
