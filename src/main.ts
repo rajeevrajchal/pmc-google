@@ -5,10 +5,6 @@ import {
 } from "components/setting";
 import { Notice, Plugin } from "obsidian";
 import { EditorEventSuggestion } from "components/event-suggestion";
-import { TokenManager } from "components/tabs/google/token-manager";
-import { TokenExchangeService } from "components/tabs/google/token-exchange";
-import { GOOGLE_OAUTH_CALLBACK_URL } from "components/tabs/google/types";
-import { TokenExpiryOption } from "components/tabs/google/types";
 
 export default class PMCPlugin extends Plugin {
   settings: PMCPluginSettingType;
@@ -28,17 +24,17 @@ export default class PMCPlugin extends Plugin {
 
       if (token) {
         try {
-          // Store access token (implicit flow - no refresh token available)
+          // Store access token
           this.settings.accessToken = token;
           this.settings.refreshToken = ""; // Clear any old refresh token
 
-          // Set expiry based on expires_in or user setting
+          // Set expiry based on expires_in or default to 1 hour
           const expiresIn = data.expires_in ? parseInt(data.expires_in) : 3600;
           this.settings.tokenExpiryDate = Date.now() + (expiresIn * 1000);
 
           await this.saveSettings();
           this.settingTab?.display();
-          new Notice("Google calendar connected (tokens expire in 1 hour - will need manual reconnection)");
+          new Notice("Google calendar connected (tokens expire in 1 hour)");
         } catch (error) {
           console.error("Failed to save access token:", error);
           new Notice("Failed to secure access token");

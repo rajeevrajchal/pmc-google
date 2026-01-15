@@ -114,7 +114,7 @@ export class PMCPluginSetting extends PluginSettingTab {
       !!this.plugin.settings.accessToken,
       this.plugin.settings.clientId,
       (decryptedClientId: string) => {
-        // On Connect - receives already decrypted client ID from renderAccountSetting
+        // On Connect - use simple OAuth flow
         GoogleAuth.initiateOAuthFlow(decryptedClientId);
       },
       async () => {

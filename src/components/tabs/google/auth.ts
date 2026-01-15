@@ -25,14 +25,14 @@ export class GoogleAuth {
 
     const authUrl = this.buildAuthUrl(clientId);
 
-    new Notice("Opening google authentication");
+    new Notice("Opening google authentication in browser");
 
     // Open OAuth URL in browser
     window.open(authUrl, "_blank");
   }
 
   /**
-   * Build the OAuth authorization URL - using implicit flow with longer expiry
+   * Build the OAuth authorization URL
    */
   private static buildAuthUrl(clientId: string): string {
     const params = new URLSearchParams({
@@ -40,7 +40,6 @@ export class GoogleAuth {
       redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
       response_type: "token",
       scope: this.SCOPES.join(" "),
-      access_type: "offline",
       prompt: "consent",
       include_granted_scopes: "true",
     });
@@ -50,7 +49,6 @@ export class GoogleAuth {
 
   /**
    * Disconnect from Google Calendar
-   * Clears the stored access token
    */
   static disconnect(): void {
     new Notice("Disconnected from google calendar");
