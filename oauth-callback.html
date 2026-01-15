@@ -47,13 +47,11 @@
       <p>Please wait while we complete the authentication.</p>
     </div>
     <script>
-      // Extract hash fragment parameters (OAuth implicit flow returns #access_token=...)
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-
-      const accessToken = params.get("access_token");
-      const expiresIn = params.get("expires_in");
-      const error = params.get("error");
+      // Extract query parameters (OAuth authorization code flow returns ?code=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      const code = urlParams.get("code");
+      const error = urlParams.get("error");
 
       if (error) {
         console.error("OAuth Error:", error);
@@ -61,13 +59,11 @@
           "<h2>Authentication Failed</h2><p>" +
           error +
           "</p><p>You can close this window.</p>";
-      } else if (accessToken) {
-        // Build obsidian:// protocol URL with query parameters
+      } else if (code) {
+        // Build obsidian:// protocol URL with authorization code
         const obsidianUrl =
           "obsidian://pick-meeting-token?" +
-          "access_token=" +
-          encodeURIComponent(accessToken) +
-          (expiresIn ? "&expires_in=" + encodeURIComponent(expiresIn) : "");
+          "code=" + encodeURIComponent(code);
 
         // Redirect to Obsidian
         window.location.href = obsidianUrl;
@@ -79,7 +75,7 @@
         }, 500);
       } else {
         document.querySelector(".message").innerHTML =
-          "<h2>No token received</h2><p>No access token found in the response.</p><p>You can close this window.</p>";
+          "<h2>No authorization code received</h2><p>No authorization code found in the response.</p><p>You can close this window.</p>";
       }
     </script>
   </body>

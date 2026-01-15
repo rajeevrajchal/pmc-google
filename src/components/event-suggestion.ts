@@ -69,13 +69,12 @@ export class EditorEventSuggestion extends EditorSuggest<EventSuggestion> {
         ).toISOString();
 
         this.cachedEvents = await GoogleCalendarAPI.fetchEvents(
-          this.plugin.settings.accessToken,
+          this.plugin,
           "primary",
           undefined,
           timeMin,
           timeMax,
           250,
-          this.plugin.settings.tokenExpiryDate,
         );
         this.lastFetchTime = now;
       } catch (error) {

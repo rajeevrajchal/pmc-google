@@ -1,66 +1,61 @@
 import { Notice, requestUrl } from "obsidian";
 import { CalendarEvent } from "./types";
-import { TokenManager } from "./token-manager";
+import { TokenRefreshService } from "./token-refresh";
+import PMCPlugin from "main";
 
 export class GoogleCalendarAPI {
   private static readonly BASE_URL = "https://www.googleapis.com/calendar/v3";
 
   /**
-   * Validate access token before making API calls
-   * @param accessToken - The access token to validate
-   * @param tokenExpiryDate - Optional token expiry date
-   * @throws Error if token is invalid, missing, or encrypted
+   * Ensure valid access token, refresh if needed
    */
-  private static validateToken(
-    accessToken: string,
-    tokenExpiryDate?: number,
-  ): void {
-    // Validate token exists and is not empty
-    if (!accessToken || accessToken.trim() === "") {
-      new Notice("Please connect to google calendar in settings");
-      throw new Error("Access token missing");
+  private static async ensureValidToken(plugin: PMCPlugin): Promise<string> {
+    const { settings } = plugin;
+    
+    if (!settings.accessToken) {
+      throw new Error("No access token available. Please connect to Google Calendar in settings.");
     }
 
-    // Check if token appears to be encrypted (should not be at this point)
-    if (accessToken.startsWith("enc:")) {
-      new Notice(
-        "Token decryption failed. Please reconnect to google calendar.",
-      );
-      throw new Error("Token not decrypted");
+    if (!settings.refreshToken) {
+      throw new Error("No refresh token available. Please reconnect to Google Calendar in settings.");
     }
 
-    // Validate token expiry
-    if (TokenManager.isTokenExpired(tokenExpiryDate)) {
-      new Notice(
-        "Google calendar token has expired, please reconnect in settings",
-      );
-      throw new Error("Token expired");
+    // Check if token is expired or expiring soon
+    if (TokenRefreshService.isTokenExpiringSoon(settings.tokenExpiryDate)) {
+      try {
+        const tokenResponse = await TokenRefreshService.refreshAccessToken(
+          settings.clientId,
+          settings.refreshToken
+        );
+
+        // Update settings with new token
+        settings.accessToken = tokenResponse.access_token;
+        settings.tokenExpiryDate = Date.now() + (tokenResponse.expires_in * 1000);
+        
+        await plugin.saveSettings();
+        console.debug("Token refreshed successfully");
+      } catch (error) {
+        console.error("Token refresh failed:", error);
+        throw new Error("Token refresh failed. Please reconnect to Google Calendar in settings.");
+      }
     }
+
+    return settings.accessToken;
   }
 
   /**
    * Fetch calendar events from Google Calendar
-   * @param accessToken - OAuth access token
-   * @param calendarId - Calendar ID (defaults to 'primary')
-   * @param query - Search query for events
-   * @param timeMin - Start time for events (ISO 8601)
-   * @param timeMax - End time for events (ISO 8601)
-   * @param maxResults - Maximum number of events to return
-   * @param tokenExpiryDate - Optional token expiry date for validation
-   * @returns Array of calendar events
    */
   static async fetchEvents(
-    accessToken: string,
+    plugin: PMCPlugin,
     calendarId: string = "primary",
     query?: string,
     timeMin?: string,
     timeMax?: string,
     maxResults: number = 250,
-    tokenExpiryDate?: number,
   ): Promise<CalendarEvent[]> {
     try {
-      // Validate token before making API call
-      this.validateToken(accessToken, tokenExpiryDate);
+      const accessToken = await this.ensureValidToken(plugin);
 
       const params: Record<string, string> = {
         singleEvents: "true",
@@ -68,15 +63,9 @@ export class GoogleCalendarAPI {
         maxResults: maxResults.toString(),
       };
 
-      if (timeMin) {
-        params.timeMin = timeMin;
-      }
-      if (timeMax) {
-        params.timeMax = timeMax;
-      }
-      if (query && query.trim() !== "") {
-        params.q = query;
-      }
+      if (timeMin) params.timeMin = timeMin;
+      if (timeMax) params.timeMax = timeMax;
+      if (query?.trim()) params.q = query;
 
       const queryString = new URLSearchParams(params).toString();
 
@@ -89,8 +78,7 @@ export class GoogleCalendarAPI {
         },
       });
 
-      const data = response.json;
-      return data.items || [];
+      return response.json.items || [];
     } catch (error) {
       console.error("Error fetching calendar events:", error);
       new Notice("Failed to fetch calendar events");
@@ -100,21 +88,15 @@ export class GoogleCalendarAPI {
 
   /**
    * Create a new calendar event
-   * @param accessToken - OAuth access token
-   * @param event - Event details to create
-   * @param calendarId - Calendar ID (defaults to 'primary')
-   * @param tokenExpiryDate - Optional token expiry date for validation
-   * @returns Created event
    */
   static async createEvent(
-    accessToken: string,
+    plugin: PMCPlugin,
     event: Partial<CalendarEvent>,
     calendarId: string = "primary",
-    tokenExpiryDate?: number,
   ): Promise<CalendarEvent> {
     try {
-      // Validate token before making API call
-      this.validateToken(accessToken, tokenExpiryDate);
+      const accessToken = await this.ensureValidToken(plugin);
+      
       const response = await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events`,
         method: "POST",
@@ -137,23 +119,16 @@ export class GoogleCalendarAPI {
 
   /**
    * Update an existing calendar event
-   * @param accessToken - OAuth access token
-   * @param eventId - ID of the event to update
-   * @param event - Updated event details
-   * @param calendarId - Calendar ID (defaults to 'primary')
-   * @param tokenExpiryDate - Optional token expiry date for validation
-   * @returns Updated event
    */
   static async updateEvent(
-    accessToken: string,
+    plugin: PMCPlugin,
     eventId: string,
     event: Partial<CalendarEvent>,
     calendarId: string = "primary",
-    tokenExpiryDate?: number,
   ): Promise<CalendarEvent> {
     try {
-      // Validate token before making API call
-      this.validateToken(accessToken, tokenExpiryDate);
+      const accessToken = await this.ensureValidToken(plugin);
+      
       const response = await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         method: "PUT",
@@ -176,20 +151,15 @@ export class GoogleCalendarAPI {
 
   /**
    * Delete a calendar event
-   * @param accessToken - OAuth access token
-   * @param eventId - ID of the event to delete
-   * @param calendarId - Calendar ID (defaults to 'primary')
-   * @param tokenExpiryDate - Optional token expiry date for validation
    */
   static async deleteEvent(
-    accessToken: string,
+    plugin: PMCPlugin,
     eventId: string,
     calendarId: string = "primary",
-    tokenExpiryDate?: number,
   ): Promise<void> {
     try {
-      // Validate token before making API call
-      this.validateToken(accessToken, tokenExpiryDate);
+      const accessToken = await this.ensureValidToken(plugin);
+      
       await requestUrl({
         url: `${this.BASE_URL}/calendars/${calendarId}/events/${eventId}`,
         method: "DELETE",
@@ -208,13 +178,9 @@ export class GoogleCalendarAPI {
 
   /**
    * Get list of available calendars
-   * @param accessToken - OAuth access token
-   * @param tokenExpiryDate - Optional token expiry date for validation
-   * @returns Array of calendar objects
    */
   static async listCalendars(
-    accessToken: string,
-    tokenExpiryDate?: number,
+    plugin: PMCPlugin,
   ): Promise<
     Array<{
       id: string;
@@ -227,8 +193,8 @@ export class GoogleCalendarAPI {
     }>
   > {
     try {
-      // Validate token before making API call
-      this.validateToken(accessToken, tokenExpiryDate);
+      const accessToken = await this.ensureValidToken(plugin);
+      
       const response = await requestUrl({
         url: `${this.BASE_URL}/users/me/calendarList`,
         method: "GET",
@@ -249,16 +215,12 @@ export class GoogleCalendarAPI {
 
   /**
    * Sync calendar events (fetch and cache)
-   * @param accessToken - OAuth access token
-   * @param tokenExpiryDate - Optional token expiry date for validation
    */
   static async syncCalendar(
-    accessToken: string,
-    tokenExpiryDate?: number,
+    plugin: PMCPlugin,
   ): Promise<void> {
     try {
-      // Validate token before making API call
-      this.validateToken(accessToken, tokenExpiryDate);
+      await this.ensureValidToken(plugin);
 
       new Notice("Syncing calendar");
 
@@ -269,7 +231,7 @@ export class GoogleCalendarAPI {
       ).toISOString();
 
       const events = await this.fetchEvents(
-        accessToken,
+        plugin,
         "primary",
         undefined,
         timeMin,

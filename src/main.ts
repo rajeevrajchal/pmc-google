@@ -6,6 +6,8 @@ import {
 import { Notice, Plugin } from "obsidian";
 import { EditorEventSuggestion } from "components/event-suggestion";
 import { TokenManager } from "components/tabs/google/token-manager";
+import { TokenExchangeService } from "components/tabs/google/token-exchange";
+import { GOOGLE_OAUTH_CALLBACK_URL } from "components/tabs/google/types";
 import { TokenExpiryOption } from "components/tabs/google/types";
 
 export default class PMCPlugin extends Plugin {
@@ -22,14 +24,23 @@ export default class PMCPlugin extends Plugin {
 
     //google oauth callback handler
     this.registerObsidianProtocolHandler("pick-meeting-token", async (data) => {
-      const token = data.access_token;
+      const code = data.code;
+      const token = data.access_token; // Fallback for old implicit flow
 
-      if (token) {
+      if (code) {
+        // New authorization code flow
         try {
-          // Store the access token (will be encrypted automatically by saveSettings)
-          this.settings.accessToken = token;
+          const tokenResponse = await TokenExchangeService.exchangeCodeForTokens(
+            this.settings.clientId,
+            code,
+            GOOGLE_OAUTH_CALLBACK_URL
+          );
 
-          // Calculate and store token expiry date based on user settings
+          // Store both access and refresh tokens
+          this.settings.accessToken = tokenResponse.access_token;
+          this.settings.refreshToken = tokenResponse.refresh_token || "";
+
+          // Calculate and store token expiry date
           const expiryOption = (this.settings.tokenExpiry ||
             "unlimited") as TokenExpiryOption;
           this.settings.tokenExpiryDate =
@@ -37,14 +48,32 @@ export default class PMCPlugin extends Plugin {
 
           await this.saveSettings();
           this.settingTab?.display();
-          new Notice("Google calendar connected");
+          new Notice("Google calendar connected with refresh token");
+        } catch (error) {
+          console.error("Failed to exchange authorization code:", error);
+          new Notice("Failed to complete authentication");
+        }
+      } else if (token) {
+        // Fallback for old implicit flow (no refresh token)
+        try {
+          this.settings.accessToken = token;
+          this.settings.refreshToken = ""; // No refresh token in implicit flow
+
+          const expiryOption = (this.settings.tokenExpiry ||
+            "unlimited") as TokenExpiryOption;
+          this.settings.tokenExpiryDate =
+            TokenManager.calculateExpiryDate(expiryOption);
+
+          await this.saveSettings();
+          this.settingTab?.display();
+          new Notice("Google calendar connected (no refresh token - please reconnect for auto-refresh)");
         } catch (error) {
           console.error("Failed to save access token:", error);
           new Notice("Failed to secure access token");
         }
       } else {
         new Notice(
-          `Connection failed: ${data.error || "No token found in response"}`,
+          `Connection failed: ${data.error || "No authorization code or token found"}`,
         );
       }
     });

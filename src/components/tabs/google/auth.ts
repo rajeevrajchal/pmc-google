@@ -38,9 +38,10 @@ export class GoogleAuth {
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
-      response_type: "token",
+      response_type: "code",
       scope: this.SCOPES.join(" "),
-      access_type: "online",
+      access_type: "offline",
+      prompt: "consent",
     });
 
     return `${this.OAUTH_URL}?${params.toString()}`;

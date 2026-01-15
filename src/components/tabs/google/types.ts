@@ -1,6 +1,7 @@
 export interface GoogleCalendarSettings {
   clientId: string;
   accessToken: string;
+  refreshToken: string;
   tokenExpiry: string;
   tokenExpiryDate?: number;
   timeRange: number;
@@ -9,6 +10,7 @@ export interface GoogleCalendarSettings {
 export const DEFAULT_GOOGLE_SETTINGS: GoogleCalendarSettings = {
   clientId: "",
   accessToken: "",
+  refreshToken: "",
   tokenExpiry: "unlimited",
   tokenExpiryDate: undefined,
   timeRange: 90,
@@ -34,6 +36,7 @@ export const GOOGLE_OAUTH_CALLBACK_URL =
 
 export interface OAuthTokenResponse {
   access_token: string;
+  refresh_token?: string;
   expires_in: number;
   scope: string;
   token_type: string;

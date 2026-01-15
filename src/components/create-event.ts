@@ -231,10 +231,9 @@ export class CreateEventModal extends Modal {
 
       // Create event via API
       const createdEvent = await GoogleCalendarAPI.createEvent(
-        this.plugin.settings.accessToken,
+        this.plugin,
         event,
         "primary",
-        this.plugin.settings.tokenExpiryDate,
       );
 
       // Get the event link

@@ -1,5 +1,5 @@
 import PMCPlugin from "main";
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, Notice, PluginSettingTab, Setting } from "obsidian";
 import {
   GoogleCalendarSettings,
   DEFAULT_GOOGLE_SETTINGS,
@@ -119,16 +119,21 @@ export class PMCPluginSetting extends PluginSettingTab {
       },
       async () => {
         this.plugin.settings.accessToken = "";
+        this.plugin.settings.refreshToken = "";
         this.plugin.settings.tokenExpiryDate = undefined;
         await this.plugin.saveSettings();
         this.display();
         GoogleAuth.disconnect();
       },
       async () => {
-        await GoogleCalendarAPI.syncCalendar(
-          this.plugin.settings.accessToken,
-          this.plugin.settings.tokenExpiryDate,
-        );
+        try {
+          await GoogleCalendarAPI.syncCalendar(
+            this.plugin,
+          );
+        } catch (error) {
+          console.error("Sync failed:", error);
+          new Notice("Sync failed. Please check your connection to Google Calendar.");
+        }
       },
     );
   }
