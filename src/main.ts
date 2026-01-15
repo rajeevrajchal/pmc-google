@@ -5,7 +5,7 @@ import {
 } from "components/setting";
 import { Notice, Plugin } from "obsidian";
 import { EditorEventSuggestion } from "components/event-suggestion";
-import { TokenExchangeService } from "components/tabs/google/token-exchange";
+import { TokenExchangeService } from "components/tabs/google/token-exchange-backend";
 
 export default class PMCPlugin extends Plugin {
   settings: PMCPluginSettingType;
@@ -25,38 +25,28 @@ export default class PMCPlugin extends Plugin {
 
       if (code) {
         try {
-          new Notice("Exchanging authorization code for tokens...");
+          new Notice("Exchanging code for tokens...");
           
-          // Exchange code for tokens
           const tokenResponse = await TokenExchangeService.exchangeCodeForTokens(
             this.settings.clientId,
             code
           );
 
-          // Store tokens
           this.settings.accessToken = tokenResponse.access_token;
           this.settings.refreshToken = tokenResponse.refresh_token || "";
-          
-          // Set expiry
+
           const expiresIn = tokenResponse.expires_in || 3600;
           this.settings.tokenExpiryDate = Date.now() + (expiresIn * 1000);
 
           await this.saveSettings();
           this.settingTab?.display();
-          
-          if (tokenResponse.refresh_token) {
-            new Notice("Google calendar connected with refresh token");
-          } else {
-            new Notice("Google calendar connected (no refresh token received)");
-          }
+          new Notice("Google calendar connected with long-lasting tokens");
         } catch (error) {
           console.error("Failed to exchange code:", error);
           new Notice("Failed to complete authentication");
         }
       } else {
-        new Notice(
-          `Connection failed: ${data.error || "No authorization code found"}`,
-        );
+        new Notice("Connection failed: no code received");
       }
     });
 

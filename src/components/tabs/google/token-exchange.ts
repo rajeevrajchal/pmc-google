@@ -20,7 +20,7 @@ export class TokenExchangeService {
         body: new URLSearchParams({
           client_id: clientId,
           code: code,
-          redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
+          redirect_uri: "http://localhost:8080",
           grant_type: "authorization_code",
         }).toString(),
       });

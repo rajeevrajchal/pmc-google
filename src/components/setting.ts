@@ -115,7 +115,6 @@ export class PMCPluginSetting extends PluginSettingTab {
       !!this.plugin.settings.accessToken,
       this.plugin.settings.clientId,
       (decryptedClientId: string) => {
-        // On Connect - use authorization code flow with callback
         GoogleAuth.initiateOAuthFlow(decryptedClientId);
       },
       async () => {

@@ -47,34 +47,27 @@
       <p>Please wait while we complete the authentication.</p>
     </div>
     <script>
-      // Check for authorization code in URL parameters
+      // Check for authorization code
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get("code");
       const error = urlParams.get("error");
 
       if (error) {
-        console.error("OAuth Error:", error);
         document.querySelector(".message").innerHTML =
-          "<h2>Authentication Failed</h2><p>" +
-          error +
-          "</p><p>You can close this window.</p>";
+          "<h2>Authentication failed</h2><p>" + error + "</p>";
       } else if (code) {
-        // Build obsidian:// protocol URL with authorization code
         const obsidianUrl =
-          "obsidian://pick-meeting-token?" +
-          "code=" + encodeURIComponent(code);
+          "obsidian://pick-meeting-token?code=" + encodeURIComponent(code);
 
-        // Redirect to Obsidian
         window.location.href = obsidianUrl;
 
-        // Show success message
         setTimeout(() => {
           document.querySelector(".message").innerHTML =
-            "<h2>Success!</h2><p>Returning to Obsidian...</p><p>If Obsidian doesn't open, you can close this window.</p>";
+            "<h2>Success!</h2><p>Returning to Obsidian...</p>";
         }, 500);
       } else {
         document.querySelector(".message").innerHTML =
-          "<h2>No authorization code received</h2><p>No authorization code found in the response.</p><p>You can close this window.</p>";
+          "<h2>No code received</h2><p>Please try again.</p>";
       }
     </script>
   </body>
