@@ -32,16 +32,17 @@ export class GoogleAuth {
   }
 
   /**
-   * Build the OAuth authorization URL
+   * Build the OAuth authorization URL - using implicit flow with longer expiry
    */
   private static buildAuthUrl(clientId: string): string {
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
-      response_type: "code",
+      response_type: "token",
       scope: this.SCOPES.join(" "),
       access_type: "offline",
       prompt: "consent",
+      include_granted_scopes: "true",
     });
 
     return `${this.OAUTH_URL}?${params.toString()}`;

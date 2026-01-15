@@ -24,56 +24,28 @@ export default class PMCPlugin extends Plugin {
 
     //google oauth callback handler
     this.registerObsidianProtocolHandler("pick-meeting-token", async (data) => {
-      const code = data.code;
-      const token = data.access_token; // Fallback for old implicit flow
+      const token = data.access_token;
 
-      if (code) {
-        // New authorization code flow
+      if (token) {
         try {
-          const tokenResponse = await TokenExchangeService.exchangeCodeForTokens(
-            this.settings.clientId,
-            code,
-            GOOGLE_OAUTH_CALLBACK_URL
-          );
-
-          // Store both access and refresh tokens
-          this.settings.accessToken = tokenResponse.access_token;
-          this.settings.refreshToken = tokenResponse.refresh_token || "";
-
-          // Calculate and store token expiry date
-          const expiryOption = (this.settings.tokenExpiry ||
-            "unlimited") as TokenExpiryOption;
-          this.settings.tokenExpiryDate =
-            TokenManager.calculateExpiryDate(expiryOption);
-
-          await this.saveSettings();
-          this.settingTab?.display();
-          new Notice("Google calendar connected with refresh token");
-        } catch (error) {
-          console.error("Failed to exchange authorization code:", error);
-          new Notice("Failed to complete authentication");
-        }
-      } else if (token) {
-        // Fallback for old implicit flow (no refresh token)
-        try {
+          // Store access token (implicit flow - no refresh token available)
           this.settings.accessToken = token;
-          this.settings.refreshToken = ""; // No refresh token in implicit flow
+          this.settings.refreshToken = ""; // Clear any old refresh token
 
-          const expiryOption = (this.settings.tokenExpiry ||
-            "unlimited") as TokenExpiryOption;
-          this.settings.tokenExpiryDate =
-            TokenManager.calculateExpiryDate(expiryOption);
+          // Set expiry based on expires_in or user setting
+          const expiresIn = data.expires_in ? parseInt(data.expires_in) : 3600;
+          this.settings.tokenExpiryDate = Date.now() + (expiresIn * 1000);
 
           await this.saveSettings();
           this.settingTab?.display();
-          new Notice("Google calendar connected (no refresh token - please reconnect for auto-refresh)");
+          new Notice("Google calendar connected (tokens expire in 1 hour - will need manual reconnection)");
         } catch (error) {
           console.error("Failed to save access token:", error);
           new Notice("Failed to secure access token");
         }
       } else {
         new Notice(
-          `Connection failed: ${data.error || "No authorization code or token found"}`,
+          `Connection failed: ${data.error || "No token found in response"}`,
         );
       }
     });

@@ -16,27 +16,27 @@ export class GoogleCalendarAPI {
       throw new Error("No access token available. Please connect to Google Calendar in settings.");
     }
 
-    if (!settings.refreshToken) {
-      throw new Error("No refresh token available. Please reconnect to Google Calendar in settings.");
-    }
+    // Check if token is expired
+    if (settings.tokenExpiryDate && Date.now() >= settings.tokenExpiryDate) {
+      if (settings.refreshToken) {
+        // Try to refresh token
+        try {
+          const tokenResponse = await TokenRefreshService.refreshAccessToken(
+            settings.clientId,
+            settings.refreshToken
+          );
 
-    // Check if token is expired or expiring soon
-    if (TokenRefreshService.isTokenExpiringSoon(settings.tokenExpiryDate)) {
-      try {
-        const tokenResponse = await TokenRefreshService.refreshAccessToken(
-          settings.clientId,
-          settings.refreshToken
-        );
-
-        // Update settings with new token
-        settings.accessToken = tokenResponse.access_token;
-        settings.tokenExpiryDate = Date.now() + (tokenResponse.expires_in * 1000);
-        
-        await plugin.saveSettings();
-        console.debug("Token refreshed successfully");
-      } catch (error) {
-        console.error("Token refresh failed:", error);
-        throw new Error("Token refresh failed. Please reconnect to Google Calendar in settings.");
+          settings.accessToken = tokenResponse.access_token;
+          settings.tokenExpiryDate = Date.now() + (tokenResponse.expires_in * 1000);
+          
+          await plugin.saveSettings();
+          console.debug("Token refreshed successfully");
+        } catch (error) {
+          console.error("Token refresh failed:", error);
+          throw new Error("Token expired and refresh failed. Please reconnect to Google Calendar in settings.");
+        }
+      } else {
+        throw new Error("Token expired and no refresh token available. Please reconnect to Google Calendar in settings.");
       }
     }
 
