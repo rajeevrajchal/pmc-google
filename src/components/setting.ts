@@ -8,6 +8,7 @@ import {
 import { GoogleAuth } from "./tabs/google/auth";
 import { GoogleCalendarAPI } from "./tabs/google/calendar-api";
 import { GoogleSettingsUI } from "./tabs/google/settings-ui";
+import { TokenExchangeService } from "./tabs/google/token-exchange";
 import { TokenManager } from "./tabs/google/token-manager";
 
 export type PMCPluginSettingType = GoogleCalendarSettings;
@@ -114,7 +115,7 @@ export class PMCPluginSetting extends PluginSettingTab {
       !!this.plugin.settings.accessToken,
       this.plugin.settings.clientId,
       (decryptedClientId: string) => {
-        // On Connect - use simple OAuth flow
+        // On Connect - use authorization code flow with callback
         GoogleAuth.initiateOAuthFlow(decryptedClientId);
       },
       async () => {
