@@ -8,7 +8,6 @@ import {
 import { GoogleAuth } from "./tabs/google/auth";
 import { GoogleCalendarAPI } from "./tabs/google/calendar-api";
 import { GoogleSettingsUI } from "./tabs/google/settings-ui";
-import { TokenExchangeService } from "./tabs/google/token-exchange";
 import { TokenManager } from "./tabs/google/token-manager";
 
 export type PMCPluginSettingType = GoogleCalendarSettings;
@@ -132,7 +131,7 @@ export class PMCPluginSetting extends PluginSettingTab {
           );
         } catch (error) {
           console.error("Sync failed:", error);
-          new Notice("Sync failed. Please check your connection to Google Calendar.");
+          new Notice("Please check your connection to google calendar");
         }
       },
     );

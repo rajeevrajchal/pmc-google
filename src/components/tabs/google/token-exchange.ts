@@ -1,45 +1,27 @@
 import { requestUrl } from "obsidian";
-import { OAuthTokenResponse, GOOGLE_OAUTH_CALLBACK_URL } from "./types";
+import { OAuthTokenResponse, GOOGLE_OAUTH_CALLBACK_URL, BACKEND_URL } from "./types";
 
 export class TokenExchangeService {
-  private static readonly TOKEN_URL = "https://oauth2.googleapis.com/token";
-
   static async exchangeCodeForTokens(
     clientId: string,
     code: string
   ): Promise<OAuthTokenResponse> {
     try {
-      console.debug("Exchanging code for tokens:", { clientId, code: code.substring(0, 10) + "..." });
-      
       const response = await requestUrl({
-        url: this.TOKEN_URL,
+        url: `${BACKEND_URL}/api/exchange`,
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
-        body: new URLSearchParams({
-          client_id: clientId,
+        body: JSON.stringify({
           code: code,
-          redirect_uri: "http://localhost:8080",
-          grant_type: "authorization_code",
-        }).toString(),
+          redirectUri: GOOGLE_OAUTH_CALLBACK_URL,
+        }),
       });
 
-      console.debug("Token exchange successful:", response.json);
       return response.json;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Token exchange failed:", error);
-      console.error("Error response:", error.response?.json);
-      
-      const errorDetails = error.response?.json;
-      if (errorDetails?.error === "invalid_client") {
-        throw new Error("Invalid client configuration. Make sure you're using a Desktop application OAuth client, not Web application.");
-      } else if (errorDetails?.error === "invalid_grant") {
-        throw new Error("Invalid authorization code. The code may have expired or been used already.");
-      } else if (errorDetails?.error_description) {
-        throw new Error(`OAuth error: ${errorDetails.error_description}`);
-      }
-      
       throw new Error("Failed to exchange authorization code for tokens");
     }
   }

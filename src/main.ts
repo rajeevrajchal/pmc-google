@@ -5,7 +5,7 @@ import {
 } from "components/setting";
 import { Notice, Plugin } from "obsidian";
 import { EditorEventSuggestion } from "components/event-suggestion";
-import { TokenExchangeService } from "components/tabs/google/token-exchange-backend";
+import { TokenExchangeService } from "components/tabs/google/token-exchange";
 
 export default class PMCPlugin extends Plugin {
   settings: PMCPluginSettingType;

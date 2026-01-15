@@ -34,7 +34,7 @@ export const TOKEN_EXPIRY_OPTIONS: Record<TokenExpiryOption, string> = {
 export const GOOGLE_OAUTH_CALLBACK_URL =
   "https://rajeevrajchal.github.io/pmc-google/oauth-callback";
 
-export const BACKEND_URL = "https://your-backend.vercel.app"; // Update after deploying
+export const BACKEND_URL = "https://obsdian-pmc-be.vercel.app"; // Update after deploying
 
 export interface OAuthTokenResponse {
   access_token: string;

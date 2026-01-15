@@ -19,7 +19,7 @@ export class GoogleSettingsUI {
       .addButton((btn) =>
         btn.setButtonText("Copy").onClick(async () => {
           await navigator.clipboard.writeText(GOOGLE_OAUTH_CALLBACK_URL);
-          new Notice("Callback URL copied to clipboard.");
+          new Notice("Callback url copied to clipboard");
         }),
       );
   }

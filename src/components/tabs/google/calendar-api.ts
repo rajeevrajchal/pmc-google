@@ -30,7 +30,6 @@ export class GoogleCalendarAPI {
           settings.tokenExpiryDate = Date.now() + (tokenResponse.expires_in * 1000);
           
           await plugin.saveSettings();
-          console.debug("Token refreshed successfully");
         } catch (error) {
           console.error("Token refresh failed:", error);
           throw new Error("Token expired and refresh failed. Please reconnect to Google Calendar in settings.");
