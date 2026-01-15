@@ -14,8 +14,8 @@ export class GoogleAuth {
   ];
 
   /**
-   * Initiate OAuth flow to connect to Google Calendar
-   * @param clientId - OAuth 2.0 Client ID from Google Cloud Console
+   * Initiate OAuth flow for Web client with authorization code
+   * @param clientId - Web OAuth 2.0 Client ID from Google Cloud Console
    */
   static initiateOAuthFlow(clientId: string): void {
     if (!clientId || clientId.trim() === "") {
@@ -32,16 +32,16 @@ export class GoogleAuth {
   }
 
   /**
-   * Build the OAuth authorization URL
+   * Build the OAuth authorization URL for Web client
    */
   private static buildAuthUrl(clientId: string): string {
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
-      response_type: "token",
+      response_type: "code", // Use code instead of token
       scope: this.SCOPES.join(" "),
+      access_type: "offline",
       prompt: "consent",
-      include_granted_scopes: "true",
     });
 
     return `${this.OAUTH_URL}?${params.toString()}`;

@@ -5,6 +5,9 @@ export interface GoogleCalendarSettings {
   tokenExpiry: string;
   tokenExpiryDate?: number;
   timeRange: number;
+  // Store long-lived tokens
+  longLivedToken?: string;
+  tokenCreatedAt?: number;
 }
 
 export const DEFAULT_GOOGLE_SETTINGS: GoogleCalendarSettings = {

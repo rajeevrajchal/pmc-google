@@ -1,78 +1,45 @@
 import { requestUrl } from "obsidian";
-import { OAuthTokenResponse } from "./types";
+import { OAuthTokenResponse, GOOGLE_OAUTH_CALLBACK_URL } from "./types";
 
 export class TokenExchangeService {
   private static readonly TOKEN_URL = "https://oauth2.googleapis.com/token";
 
-  // Generate code verifier for PKCE
-  private static generateCodeVerifier(): string {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return btoa(String.fromCharCode.apply(null, Array.from(array)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
-  }
-
-  // Generate code challenge from verifier
-  private static async generateCodeChallenge(verifier: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(verifier);
-    const digest = await crypto.subtle.digest('SHA-256', data);
-    return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(digest))))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
-  }
-
-  // Store code verifier for later use
-  static storeCodeVerifier(verifier: string): void {
-    sessionStorage.setItem('oauth_code_verifier', verifier);
-  }
-
-  // Retrieve stored code verifier
-  static getStoredCodeVerifier(): string | null {
-    return sessionStorage.getItem('oauth_code_verifier');
-  }
-
-  // Generate PKCE parameters
-  static async generatePKCEParams(): Promise<{ verifier: string; challenge: string }> {
-    const verifier = this.generateCodeVerifier();
-    const challenge = await this.generateCodeChallenge(verifier);
-    return { verifier, challenge };
-  }
-
   static async exchangeCodeForTokens(
     clientId: string,
-    code: string,
-    redirectUri: string,
-    codeVerifier?: string
+    code: string
   ): Promise<OAuthTokenResponse> {
     try {
-      const body = new URLSearchParams({
-        client_id: clientId,
-        code: code,
-        redirect_uri: redirectUri,
-        grant_type: "authorization_code",
-      });
-
-      // Add code verifier if provided (PKCE)
-      if (codeVerifier) {
-        body.append('code_verifier', codeVerifier);
-      }
-
+      console.debug("Exchanging code for tokens:", { clientId, code: code.substring(0, 10) + "..." });
+      
       const response = await requestUrl({
         url: this.TOKEN_URL,
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: body.toString(),
+        body: new URLSearchParams({
+          client_id: clientId,
+          code: code,
+          redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
+          grant_type: "authorization_code",
+        }).toString(),
       });
 
+      console.debug("Token exchange successful:", response.json);
       return response.json;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Token exchange failed:", error);
+      console.error("Error response:", error.response?.json);
+      
+      const errorDetails = error.response?.json;
+      if (errorDetails?.error === "invalid_client") {
+        throw new Error("Invalid client configuration. Make sure you're using a Desktop application OAuth client, not Web application.");
+      } else if (errorDetails?.error === "invalid_grant") {
+        throw new Error("Invalid authorization code. The code may have expired or been used already.");
+      } else if (errorDetails?.error_description) {
+        throw new Error(`OAuth error: ${errorDetails.error_description}`);
+      }
+      
       throw new Error("Failed to exchange authorization code for tokens");
     }
   }
