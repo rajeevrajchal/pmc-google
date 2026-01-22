@@ -83,11 +83,11 @@ export class OAuthServer {
 <body>
     <div class="container">
         <div class="spinner"></div>
-        <h2>Connecting to Obsidian...</h2>
+        <h2>Connecting to obsidian...</h2>
         <p id="message">Please wait...</p>
         <div id="manual-link" style="display:none;">
-            <p>If Obsidian doesn't open automatically:</p>
-            <a id="obsidian-link" href="#">Click here to open Obsidian</a>
+            <p>If obsidian doesn't open automatically:</p>
+            <a id="obsidian-link" href="#">Click here to open obsidian</a>
         </div>
     </div>
     <script>
@@ -112,7 +112,7 @@ export class OAuthServer {
                 'access_token=' + encodeURIComponent(accessToken) +
                 (expiresIn ? '&expires_in=' + encodeURIComponent(expiresIn) : '');
             
-            // Try to open Obsidian automatically
+            // Try to open obsidian automatically
             window.location.href = obsidianUrl;
             
             // Show success message and manual link after a delay
