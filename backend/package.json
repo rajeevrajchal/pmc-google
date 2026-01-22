@@ -1,5 +1,6 @@
 {
   "name": "pmc-google-backend",
   "version": "1.0.0",
-  "type": "module"
+  "type": "module",
+  "outputs": "public"
 }
