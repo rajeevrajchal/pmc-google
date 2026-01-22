@@ -13,7 +13,7 @@ export class GoogleCalendarAPI {
     const { settings } = plugin;
     
     if (!settings.accessToken) {
-      throw new Error("No access token available. Please connect to Google Calendar in settings.");
+      throw new Error("No access token available. Please connect to google calendar in settings.");
     }
 
     // Check if token is expired
@@ -30,13 +30,12 @@ export class GoogleCalendarAPI {
           settings.tokenExpiryDate = Date.now() + (tokenResponse.expires_in * 1000);
           
           await plugin.saveSettings();
-          console.debug("Token refreshed successfully");
         } catch (error) {
           console.error("Token refresh failed:", error);
-          throw new Error("Token expired and refresh failed. Please reconnect to Google Calendar in settings.");
+          throw new Error("Token expired and refresh failed. Please reconnect to google calendar in settings.");
         }
       } else {
-        throw new Error("Token expired and no refresh token available. Please reconnect to Google Calendar in settings.");
+        throw new Error("Token expired and no refresh token available. Please reconnect to google calendar in settings.");
       }
     }
 

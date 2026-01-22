@@ -14,8 +14,7 @@ export class GoogleAuth {
   ];
 
   /**
-   * Initiate OAuth flow for Web client with authorization code
-   * @param clientId - Web OAuth 2.0 Client ID from Google Cloud Console
+   * Initiate OAuth flow
    */
   static initiateOAuthFlow(clientId: string): void {
     if (!clientId || clientId.trim() === "") {
@@ -24,21 +23,18 @@ export class GoogleAuth {
     }
 
     const authUrl = this.buildAuthUrl(clientId);
-
     new Notice("Opening google authentication in browser");
-
-    // Open OAuth URL in browser
     window.open(authUrl, "_blank");
   }
 
   /**
-   * Build the OAuth authorization URL for Web client
+   * Build OAuth URL - authorization code flow for backend
    */
   private static buildAuthUrl(clientId: string): string {
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: GOOGLE_OAUTH_CALLBACK_URL,
-      response_type: "code", // Use code instead of token
+      response_type: "code",
       scope: this.SCOPES.join(" "),
       access_type: "offline",
       prompt: "consent",
@@ -47,9 +43,6 @@ export class GoogleAuth {
     return `${this.OAUTH_URL}?${params.toString()}`;
   }
 
-  /**
-   * Disconnect from Google Calendar
-   */
   static disconnect(): void {
     new Notice("Disconnected from google calendar");
   }
